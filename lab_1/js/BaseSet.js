@@ -4,6 +4,7 @@ class BaseSet {
   #$relation;
   #$relationRows;
   #$addPairBtn;
+  #$cardinality;
   #set = [];
   #relationMap = new Map();
   #pairIndex = 0;
@@ -24,14 +25,15 @@ class BaseSet {
     this.#$relation = this.#$elem.querySelector(`.${this.baseClass}__relation`);
     this.#$relationRows = this.#$elem.querySelector(`.${this.baseClass}__relation-rows`);
     this.#$addPairBtn = this.#$elem.querySelector(`.${this.baseClass}__add-pair`);
+    this.#$cardinality = this.#$elem.querySelector(`.${this.baseClass}__cardinality`);
   }
 
   setEventListeners() {
-    this.#$textarea.addEventListener('change', this.buildSet.bind(this))
+    this.#$textarea.addEventListener('change', this.onSetChange.bind(this))
     this.#$addPairBtn.addEventListener('click', this.addRelationPair.bind(this))
   }
 
-  buildSet() {
+  onSetChange() {
     this.cleanSetElements();
 
     this.showRelations();
@@ -53,6 +55,8 @@ class BaseSet {
     setElements.sort((a, b) => a < b ? -1 : 1);
 
     this.#set = [...setElements];
+
+    this.#$cardinality.innerText = this.#set.length;
 
     this.#$textarea.value = this.#set.join(' ');
   }
