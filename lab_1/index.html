@@ -24,26 +24,28 @@
 		<fieldset>
 			<legend>Инициализация бинарного множества и отношения</legend>
 
-			<label class="label" for="set-elements">
-				Введите элементы множества через пробел: *
-			</label>
-			<textarea class="input-set-elements__textarea" id="set-elements"></textarea>
+			<div class="input-set-elements__container">
+				<label class="label" for="set-elements">
+					Введите элементы множества через пробел: *
+				</label>
+				<textarea class="input-set-elements__textarea" id="set-elements"></textarea>
 
-			<div class="input-set-elements__notice">
-				* Во множество могут входить только числа.<br>
-				&nbsp;&nbsp;&nbsp;Элементы множества не могут повторяться.<br>
-				&nbsp;&nbsp;&nbsp;Повторяющиеся и некорректные элементы будут удалены автоматически.
-			</div>
-
-			<div class="input-set-elements__relation" style="display: none;">
-				<div class="input-set-elements__relation-rows">
-
+				<div class="input-set-elements__notice">
+					* Во множество могут входить только числа.<br>
+					&nbsp;&nbsp;&nbsp;Элементы множества не могут повторяться.<br>
+					&nbsp;&nbsp;&nbsp;Повторяющиеся и некорректные элементы будут удалены автоматически.
 				</div>
 
-				<button type="button" class="input-set-elements__add-pair">Добавить пару</button>
-			</div>
+				<div class="input-set-elements__relation" style="display: none;">
+					<div class="input-set-elements__relation-rows">
 
-			<p>Мощность множества: <b class="input-set-elements__cardinality">0</b></p>
+					</div>
+
+					<button type="button" class="input-set-elements__add-pair">Добавить еще одну пару</button>
+				</div>
+
+				<p>Мощность множества: <b class="input-set-elements__cardinality">0</b></p>
+			</div>
 
 			<button class="input-set-elements__create-set" type="button">Создать множество и отношение на нём</button>
 		</fieldset>

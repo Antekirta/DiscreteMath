@@ -1,3 +1,7 @@
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
 class BaseSet {
   #$elem;
   #$textarea;
@@ -9,6 +13,7 @@ class BaseSet {
   #set = [];
   #relationMap = new Map();
   #currentPairIndex = 0;
+  #onPairInputChange;
 
   constructor($elem) {
     this.#$elem = $elem;
@@ -19,6 +24,8 @@ class BaseSet {
     this.hideRelations();
 
     this.setEventListeners();
+
+    this.#onPairInputChange = this.validatePairInput.bind(this);
   }
 
   initElements() {
@@ -35,6 +42,7 @@ class BaseSet {
   setEventListeners() {
     this.#$textarea.addEventListener('change', this.onSetChange.bind(this))
     this.#$addPairBtn.addEventListener('click', this.addPair.bind(this))
+    this.#$createSetBtn.addEventListener('click', this.generateRandomRelation.bind(this))
   }
 
   onSetChange() {
@@ -102,16 +110,16 @@ class BaseSet {
     }, '')
 
     const row = `
-      <div class="row mb-15" data-pair-index="${this.#currentPairIndex}">
+      <div class="${this.baseClass}__pair-row row mb-15" data-pair-index="${this.#currentPairIndex}">
             <div class="col">
-              <input placeholder="Выберите элемент" list="${firstId}">
+              <input class="${this.baseClass}__pair-input" placeholder="Выберите элемент" list="${firstId}">
               <datalist id="${firstId}">
                 ${options}
               </datalist>
             </div>
 
             <div class="col">
-              <input placeholder="Выберите элемент" list="${secondId}">
+              <input class="${this.baseClass}__pair-input" placeholder="Выберите элемент" list="${secondId}">
               <datalist id="${secondId}">
                 ${options}
               </datalist>
@@ -132,7 +140,72 @@ class BaseSet {
       $removeBtn.addEventListener('click', BaseSet.removePair)
     }
 
+    const $pairInputs = this.#$relationRows.querySelectorAll(`.${this.baseClass}__pair-input`)
+
+    for (const $pairInput of $pairInputs) {
+      $pairInput.removeEventListener('change', this.#onPairInputChange);
+      $pairInput.addEventListener('change', this.#onPairInputChange);
+    }
+
     this.#currentPairIndex++;
+  }
+
+  validatePairInput({target}) {
+    if (!this.#set.includes(+target.value)) {
+      console.log('Error!');
+      target.value = '';
+
+      target.setAttribute('title', 'Элемент пары должен принадлежать множеству!');
+
+      target.classList.add('error');
+    } else {
+      target.removeAttribute('title');
+
+      target.classList.remove('error');
+    }
+  }
+
+  createSetAndRelation() {
+    this.#relationMap = new Map();
+
+    const $rows = this.#$relationRows.querySelectorAll(`.${this.baseClass}__pair-row`);
+    let $rowInputs, x, y;
+
+    for (const $row of $rows) {
+      $rowInputs = $row.querySelectorAll(`.${this.baseClass}__pair-input`);
+
+      [x, y] = Object.values($rowInputs).map(input => +input.value);
+
+      if (this.#relationMap.has(x)) {
+        this.#relationMap.set(x, [...this.#relationMap.get(x), y])
+      } else {
+        this.#relationMap.set(x, [y]);
+      }
+    }
+
+    document.dispatchEvent(new Event('SET_HAS_BEEN_UPDATED'));
+
+    console.log('this.#relationMap: ', this.#relationMap);
+  }
+
+  generateRandomRelation() {
+    this.#relationMap = new Map();
+
+    let x, y;
+
+    for (let i = 0; i < this.#set.length; i++) {
+      [x, y] = [this.#set[getRandomInt(this.#set.length)], this.#set[getRandomInt(this.#set.length)]];
+
+      if (this.#relationMap.has(x)) {
+        this.#relationMap.set(x, [...this.#relationMap.get(x), y])
+      } else {
+        this.#relationMap.set(x, [y]);
+      }
+    }
+
+    document.dispatchEvent(new Event('SET_HAS_BEEN_UPDATED'));
+
+    console.log('this.#relationMap: ', this.#relationMap);
   }
 
   static removePair({target}) {
