@@ -67,3 +67,15 @@ fieldset {
     -ms-user-select: none;
     user-select: none;
 }
+
+.input-set-elements__remove-pair {
+    position: relative;
+    top: -2px;
+    cursor: pointer;
+    transition: .1s;
+    font-size: 18px;
+}
+
+.input-set-elements__remove-pair:hover {
+    opacity: 0.8;
+}

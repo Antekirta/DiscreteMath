@@ -5,9 +5,10 @@ class BaseSet {
   #$relationRows;
   #$addPairBtn;
   #$cardinality;
+  #$createSetBtn;
   #set = [];
   #relationMap = new Map();
-  #pairIndex = 0;
+  #currentPairIndex = 0;
 
   constructor($elem) {
     this.#$elem = $elem;
@@ -26,39 +27,50 @@ class BaseSet {
     this.#$relationRows = this.#$elem.querySelector(`.${this.baseClass}__relation-rows`);
     this.#$addPairBtn = this.#$elem.querySelector(`.${this.baseClass}__add-pair`);
     this.#$cardinality = this.#$elem.querySelector(`.${this.baseClass}__cardinality`);
+    this.#$createSetBtn = this.#$elem.querySelector(`.${this.baseClass}__create-set`);
+
+    this.disableCreateBtn();
   }
 
   setEventListeners() {
     this.#$textarea.addEventListener('change', this.onSetChange.bind(this))
-    this.#$addPairBtn.addEventListener('click', this.addRelationPair.bind(this))
+    this.#$addPairBtn.addEventListener('click', this.addPair.bind(this))
   }
 
   onSetChange() {
-    this.cleanSetElements();
+    this.buildSet();
 
-    this.showRelations();
+    if (this.#set.length) {
+      this.enableCreateBtn();
+
+      this.showRelations();
+    } else {
+      this.disableCreateBtn();
+
+      this.hideRelations();
+    }
   }
 
-  cleanSetElements() {
-    const rawElements = this.#$textarea.value.replace(/\s+/g, ' ').split(' ');
+  buildSet() {
+    const textAreaValue = this.#$textarea.value;
 
-    const setElements = rawElements
-      .filter((elem, index) => {
-        if (isNaN(elem)) {
-          return false;
-        }
+    const rawElements = textAreaValue
+      ? textAreaValue.replace(/\s+/g, ' ').split(' ')
+      : [];
 
-        return !rawElements.slice(index + 1).includes(elem);
-      })
-      .map(elem => +elem);
+    const setElements = BaseSet.filterSetElements(rawElements);
 
     setElements.sort((a, b) => a < b ? -1 : 1);
 
     this.#set = [...setElements];
 
-    this.#$cardinality.innerText = this.#set.length;
-
     this.#$textarea.value = this.#set.join(' ');
+
+    this.renderCardinality();
+  }
+
+  renderCardinality() {
+    this.#$cardinality.innerText = this.#set.length;
   }
 
   showRelations() {
@@ -67,11 +79,21 @@ class BaseSet {
 
   hideRelations() {
     this.#$relation.style.display = 'none';
+
+    this.#$relationRows.innerHTML = null;
   }
 
-  addRelationPair() {
-    const firstId = `pair_${this.#pairIndex}_1`;
-    const secondId = `pair_${this.#pairIndex}_2`;
+  enableCreateBtn() {
+    this.#$createSetBtn.disabled = false;
+  }
+
+  disableCreateBtn() {
+    this.#$createSetBtn.disabled = true;
+  }
+
+  addPair() {
+    const firstId = `pair_${this.#currentPairIndex}_1`;
+    const secondId = `pair_${this.#currentPairIndex}_2`;
     const options = this.#set.reduce((acc, currentSetElem) => {
       return `
         ${acc}
@@ -80,7 +102,7 @@ class BaseSet {
     }, '')
 
     const row = `
-      <div class="row mb-15" data-pair-index="${this.#pairIndex}">
+      <div class="row mb-15" data-pair-index="${this.#currentPairIndex}">
             <div class="col">
               <input placeholder="Выберите элемент" list="${firstId}">
               <datalist id="${firstId}">
@@ -94,11 +116,40 @@ class BaseSet {
                 ${options}
               </datalist>
             </div>
+            
+            <div class="${this.baseClass}__remove-pair col"
+             data-index-to-remove="${this.#currentPairIndex}"
+             title="Удалить пару">&#128465;</div>
           </div>
     `;
 
     this.#$relationRows.insertAdjacentHTML('beforeend', row);
 
-    this.#pairIndex++;
+    const $removeBtns = this.#$relationRows.querySelectorAll(`.${this.baseClass}__remove-pair`);
+
+    for (const $removeBtn of $removeBtns) {
+      $removeBtn.removeEventListener('click', BaseSet.removePair)
+      $removeBtn.addEventListener('click', BaseSet.removePair)
+    }
+
+    this.#currentPairIndex++;
+  }
+
+  static removePair({target}) {
+    const $row = target.parentNode;
+
+    $row.parentNode.removeChild($row);
+  }
+
+  static filterSetElements(rawElements) {
+    return rawElements
+      .filter((elem, index) => {
+        if (isNaN(elem)) {
+          return false;
+        }
+
+        return !rawElements.slice(index + 1).includes(elem);
+      })
+      .map(elem => +elem);
   }
 }
