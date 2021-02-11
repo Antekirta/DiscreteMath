@@ -90,6 +90,7 @@ class RelationMatrix {
     `;
 
     this.checkReflexivity();
+    this.checkAntiReflexivity();
   }
 
   checkReflexivity() {
@@ -98,5 +99,13 @@ class RelationMatrix {
     });
 
     console.log('isReflexive: ', isReflexive);
+  }
+
+  checkAntiReflexivity() {
+    const isAntiReflexive = this.#set.every(elem => {
+      return this.#relationMap.has(elem) && !this.#relationMap.get(elem).includes(elem);
+    });
+
+    console.log('isAntiReflexive: ', isAntiReflexive);
   }
 }
