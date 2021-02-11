@@ -88,5 +88,15 @@ class RelationMatrix {
         ${this.renderMatrixElements()}
     </svg>
     `;
+
+    this.checkReflexivity();
+  }
+
+  checkReflexivity() {
+    const isReflexive = this.#set.every(elem => {
+      return this.#relationMap.has(elem) && this.#relationMap.get(elem).includes(elem);
+    });
+
+    console.log('isReflexive: ', isReflexive);
   }
 }

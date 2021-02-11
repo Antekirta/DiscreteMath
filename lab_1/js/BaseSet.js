@@ -42,7 +42,7 @@ class BaseSet {
   setEventListeners() {
     this.#$textarea.addEventListener('change', this.onSetChange.bind(this))
     this.#$addPairBtn.addEventListener('click', this.addPair.bind(this))
-    this.#$createSetBtn.addEventListener('click', this.generateRandomRelation.bind(this))
+    this.#$createSetBtn.addEventListener('click', this.createSetAndRelation.bind(this))
   }
 
   onSetChange() {
