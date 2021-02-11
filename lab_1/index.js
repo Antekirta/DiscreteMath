@@ -2,8 +2,11 @@
 
 const $inputSetElements = document.getElementById('input-set-elements');
 
-document.addEventListener('SET_HAS_BEEN_UPDATED', (event) => {
-  console.log('SET_HAS_BEEN_UPDATED!!!', event);
-})
+const relationMatrix = new RelationMatrix();
+new BaseSet($inputSetElements);
 
-const baseSet = new BaseSet($inputSetElements);
+document.addEventListener('SET_HAS_BEEN_UPDATED', (event) => {
+  const { data: { set, relationMap } } = event;
+
+  relationMatrix.init(set, relationMap);
+});

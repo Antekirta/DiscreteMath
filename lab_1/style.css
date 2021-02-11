@@ -34,7 +34,8 @@ fieldset {
 }
 
 .input-set-elements {
-    width: 500px;
+    width: 450px;
+    min-height: 360px;
     padding: 0 10px;
 }
 
@@ -93,4 +94,34 @@ fieldset {
 
 .input-set-elements__create-set {
     margin-top: 15px;
+}
+
+.relational-matrix {
+    width: calc(100vw - 550px);
+}
+
+.relational-matrix__matrix {
+    padding-right: 30px;
+    height: auto;
+    max-height: 700px;
+    max-width: calc(100vw - 600px);
+    overflow: auto;
+}
+
+.relational-matrix__matrix::-webkit-scrollbar {
+    width: 3px;
+}
+
+.relational-matrix__matrix::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+
+.relational-matrix__matrix::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+}
+
+.relational-matrix__container {
+    min-height: 300px;
+    padding-bottom: 0;
 }

@@ -183,7 +183,14 @@ class BaseSet {
       }
     }
 
-    document.dispatchEvent(new Event('SET_HAS_BEEN_UPDATED'));
+    const event = new Event('SET_HAS_BEEN_UPDATED');
+
+    event.data = {
+      set: this.#set,
+      relationMap: this.#relationMap
+    }
+
+    document.dispatchEvent(event);
 
     console.log('this.#relationMap: ', this.#relationMap);
   }
@@ -203,7 +210,14 @@ class BaseSet {
       }
     }
 
-    document.dispatchEvent(new Event('SET_HAS_BEEN_UPDATED'));
+    const event = new Event('SET_HAS_BEEN_UPDATED');
+
+    event.data = {
+      set: this.#set,
+      relationMap: this.#relationMap
+    }
+
+    document.dispatchEvent(event);
 
     console.log('this.#relationMap: ', this.#relationMap);
   }

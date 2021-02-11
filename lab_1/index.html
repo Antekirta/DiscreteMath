@@ -20,39 +20,55 @@
 <br><br>
 
 <main>
-	<form class="input-set-elements" id="input-set-elements" style="margin-bottom: 50px;">
-		<fieldset>
-			<legend>Инициализация бинарного множества и отношения</legend>
+	<div class="row">
+		<div class="col">
+			<form class="input-set-elements" id="input-set-elements" style="margin-bottom: 50px;">
+				<fieldset>
+					<legend>Инициализация бинарного множества и отношения</legend>
 
-			<div class="input-set-elements__container">
-				<label class="label" for="set-elements">
-					Введите элементы множества через пробел: *
-				</label>
-				<textarea class="input-set-elements__textarea" id="set-elements"></textarea>
+					<div class="input-set-elements__container">
+						<label class="label" for="set-elements">
+							Введите элементы множества через пробел: *
+						</label>
+						<textarea class="input-set-elements__textarea" id="set-elements"></textarea>
 
-				<div class="input-set-elements__notice">
-					* Во множество могут входить только числа.<br>
-					&nbsp;&nbsp;&nbsp;Элементы множества не могут повторяться.<br>
-					&nbsp;&nbsp;&nbsp;Повторяющиеся и некорректные элементы будут удалены автоматически.
-				</div>
+						<div class="input-set-elements__notice">
+							* Во множество могут входить только числа.<br>
+							&nbsp;&nbsp;&nbsp;Элементы множества не могут повторяться.<br>
+							&nbsp;&nbsp;&nbsp;Повторяющиеся и некорректные элементы будут удалены автоматически.
+						</div>
 
-				<div class="input-set-elements__relation" style="display: none;">
-					<div class="input-set-elements__relation-rows">
+						<div class="input-set-elements__relation" style="display: none;">
+							<div class="input-set-elements__relation-rows">
 
+							</div>
+
+							<button type="button" class="input-set-elements__add-pair">Добавить еще одну пару</button>
+						</div>
+
+						<p>Мощность множества: <b class="input-set-elements__cardinality">0</b></p>
 					</div>
 
-					<button type="button" class="input-set-elements__add-pair">Добавить еще одну пару</button>
-				</div>
+					<button class="input-set-elements__create-set" type="button">Создать множество и отношение на нём</button>
+				</fieldset>
+			</form>
+		</div>
 
-				<p>Мощность множества: <b class="input-set-elements__cardinality">0</b></p>
-			</div>
+		<div class="col">
+			<form class="relational-matrix">
+				<fieldset class="relational-matrix__container">
+					<legend>Матрица бинарного отношения</legend>
 
-			<button class="input-set-elements__create-set" type="button">Создать множество и отношение на нём</button>
-		</fieldset>
-	</form>
+					<div class="relational-matrix__matrix">
+					</div>
+				</fieldset>
+			</form>
+		</div>
+	</div>
 </main>
 
 <script src="./js/BaseSet.js"></script>
+<script src="./js/RelationMatrix.js"></script>
 <script src="./index.js"></script>
 </body>
 </html>
