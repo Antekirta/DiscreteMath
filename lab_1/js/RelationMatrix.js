@@ -83,14 +83,15 @@ class RelationMatrix {
         width="${this.#size}" height="${this.#size}"
         xmlns="http://www.w3.org/2000/svg">
         ${this.renderAxis()}
-        <rect x="${this.#cellSize}" y="0" width="1" height="${this.#size - this.#cellSize*2}" fill="#222" />
-        <rect x="${this.#cellSize}" y="${this.#size - this.#cellSize*2}" width="${this.#size - this.#cellSize*2}" height="1" fill="#222" />
+        <rect x="${this.#cellSize}" y="0" width="1" height="${this.#size - this.#cellSize * 2}" fill="#222" />
+        <rect x="${this.#cellSize}" y="${this.#size - this.#cellSize * 2}" width="${this.#size - this.#cellSize * 2}" height="1" fill="#222" />
         ${this.renderMatrixElements()}
     </svg>
     `;
 
     this.checkReflexivity();
-    this.checkAntiReflexivity();
+    this.checkIrreflexivity();
+    this.checkSymmetry();
   }
 
   checkReflexivity() {
@@ -101,11 +102,23 @@ class RelationMatrix {
     console.log('isReflexive: ', isReflexive);
   }
 
-  checkAntiReflexivity() {
-    const isAntiReflexive = this.#set.every(elem => {
-      return this.#relationMap.has(elem) && !this.#relationMap.get(elem).includes(elem);
+  checkIrreflexivity() {
+    const isIrreflexive = this.#set.every(elem => {
+      return this.#relationMap.has(elem)
+        ? !this.#relationMap.get(elem).includes(elem)
+        : true;
     });
 
-    console.log('isAntiReflexive: ', isAntiReflexive);
+    console.log('isIrreflexive: ', isIrreflexive);
+  }
+
+  checkSymmetry() {
+    const isSymmetric = this.#set.every(elem => {
+      return this.#relationMap.has(elem) && this.#relationMap.get(elem).every(innerElem => {
+        return this.#relationMap.has(innerElem) && this.#relationMap.get(innerElem).includes(elem);
+      })
+    })
+
+    console.log('isSymmetric: ', isSymmetric);
   }
 }
