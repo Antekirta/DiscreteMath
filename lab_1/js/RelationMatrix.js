@@ -93,6 +93,7 @@ class RelationMatrix {
     this.checkIrreflexivity();
     this.checkSymmetry();
     this.checkAntiSymmetry();
+    this.checkTransitivity();
   }
 
   checkReflexivity() {
@@ -135,5 +136,25 @@ class RelationMatrix {
     })
 
     console.log('isAntiSymmetric: ', isAntiSymmetric);
+  }
+
+  checkTransitivity() {
+    const isTransitive = this.#set.every(elem => {
+       if (this.#relationMap.has(elem)) {
+         return this.#relationMap.get(elem).every(innerElem => {
+           if (this.#relationMap.has(innerElem)) {
+             return this.#relationMap.get(innerElem).every(innerInnerElem => {
+               return this.#relationMap.get(elem).includes(innerInnerElem);
+             });
+           }
+
+           return true;
+         })
+       }
+
+       return true;
+    });
+
+    console.log('isTransitive: ', isTransitive);
   }
 }
