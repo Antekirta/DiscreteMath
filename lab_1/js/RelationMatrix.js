@@ -92,6 +92,7 @@ class RelationMatrix {
     this.checkReflexivity();
     this.checkIrreflexivity();
     this.checkSymmetry();
+    this.checkAntiSymmetry();
   }
 
   checkReflexivity() {
@@ -120,5 +121,19 @@ class RelationMatrix {
     })
 
     console.log('isSymmetric: ', isSymmetric);
+  }
+
+  checkAntiSymmetry() {
+    const isAntiSymmetric = this.#set.every(elem => {
+      return this.#relationMap.has(elem) && this.#relationMap.get(elem).every(innerElem => {
+        if (innerElem === elem) {
+          return true;
+        }
+
+        return !this.#relationMap.has(innerElem) || !this.#relationMap.get(innerElem).includes(elem);
+      })
+    })
+
+    console.log('isAntiSymmetric: ', isAntiSymmetric);
   }
 }
