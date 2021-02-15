@@ -3,6 +3,12 @@ class RelationMatrix {
   #relationMap;
   #baseClass = 'relational-matrix';
   #$root;
+  #$features;
+  #$isReflexiveFeature;
+  #$isIrreflexiveFeature;
+  #$isSymmetricFeature;
+  #$isAntiSymmetricFeature;
+  #$isTransitiveFeature;
   #$matrix;
   #cellSize = 40;
   #size;
@@ -10,12 +16,21 @@ class RelationMatrix {
   constructor() {
     this.#$root = document.querySelector(`.${this.#baseClass}`);
     this.#$matrix = document.querySelector(`.${this.#baseClass}__matrix`);
+    this.#$features = document.querySelector(`.${this.#baseClass}__features`);
+
+    this.#$isReflexiveFeature = document.querySelector(`.${this.#baseClass}__features--reflexivity`);
+    this.#$isIrreflexiveFeature = document.querySelector(`.${this.#baseClass}__features--irreflexivity`);
+    this.#$isSymmetricFeature = document.querySelector(`.${this.#baseClass}__features--symmetry`);
+    this.#$isAntiSymmetricFeature = document.querySelector(`.${this.#baseClass}__features--antisymmetry`);
+    this.#$isTransitiveFeature = document.querySelector(`.${this.#baseClass}__features--transitivity`);
   }
 
   init(set, relationMap) {
     this.#set = set;
     this.#relationMap = relationMap;
     this.#size = (this.#set.length + 2) * this.#cellSize;
+
+    this.#relationMap.size ? this.showFeatures() : this.hideFeatures();
 
     this.drawMatrix();
   }
@@ -76,6 +91,14 @@ class RelationMatrix {
     return matrixElements;
   }
 
+  showFeatures() {
+    this.#$features.style.display = 'block';
+  }
+
+  hideFeatures() {
+    this.#$features.style.display = 'none';
+  }
+
   drawMatrix() {
     this.#$matrix.innerHTML = `
     <svg version="1.1"
@@ -101,6 +124,10 @@ class RelationMatrix {
       return this.#relationMap.has(elem) && this.#relationMap.get(elem).includes(elem);
     });
 
+    this.#$isReflexiveFeature.innerText = isReflexive
+      ? 'рефлексивно'
+      : 'не рефлексивно';
+
     console.log('isReflexive: ', isReflexive);
   }
 
@@ -111,6 +138,10 @@ class RelationMatrix {
         : true;
     });
 
+    this.#$isIrreflexiveFeature.innerText = isIrreflexive
+      ? 'антирефлексивно'
+      : 'не антирефлексивно';
+
     console.log('isIrreflexive: ', isIrreflexive);
   }
 
@@ -119,7 +150,11 @@ class RelationMatrix {
       return this.#relationMap.has(elem) && this.#relationMap.get(elem).every(innerElem => {
         return this.#relationMap.has(innerElem) && this.#relationMap.get(innerElem).includes(elem);
       })
-    })
+    });
+
+    this.#$isSymmetricFeature.innerText = isSymmetric
+      ? 'симметрично'
+      : 'не симметрично';
 
     console.log('isSymmetric: ', isSymmetric);
   }
@@ -133,7 +168,11 @@ class RelationMatrix {
 
         return !this.#relationMap.has(innerElem) || !this.#relationMap.get(innerElem).includes(elem);
       })
-    })
+    });
+
+    this.#$isAntiSymmetricFeature.innerText = isAntiSymmetric
+      ? 'антисимметрично'
+      : 'не антисимметрично';
 
     console.log('isAntiSymmetric: ', isAntiSymmetric);
   }
@@ -154,6 +193,10 @@ class RelationMatrix {
 
        return true;
     });
+
+    this.#$isTransitiveFeature.innerText = isTransitive
+      ? 'транзитивно'
+      : 'не транзитивно';
 
     console.log('isTransitive: ', isTransitive);
   }

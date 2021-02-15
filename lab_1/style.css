@@ -100,6 +100,22 @@ fieldset {
     width: calc(100vw - 550px);
 }
 
+.relational-matrix__features {
+    display: none;
+    margin-bottom: 30px;
+    font-size: 18px;
+}
+
+.relational-matrix__feature {
+    border-bottom: dashed 1px #222;
+    cursor: help;
+    transition: .1s;
+}
+
+.relational-matrix__feature:hover {
+    opacity: .8;
+}
+
 .relational-matrix__matrix {
     padding-right: 30px;
     height: auto;
