@@ -14,7 +14,8 @@ class RelationMatrix {
   #cellSize = 40;
   #size;
   #inProgress = {
-    illustrateReflexivity: false
+    illustrateReflexivity: false,
+    illustrateIrreflexivity: false
   }
   #isReflexive;
   #isIrreflexive;
@@ -34,6 +35,7 @@ class RelationMatrix {
     this.#$isTransitiveFeature = document.querySelector(`.${this.#baseClass}__features--transitivity`);
 
     this.#$isReflexiveFeature.addEventListener('click', this.illustrateReflexivity.bind(this));
+    this.#$isIrreflexiveFeature.addEventListener('click', this.illustrateIrreflexivity.bind(this));
   }
 
   init(set, relationMap) {
@@ -175,10 +177,8 @@ class RelationMatrix {
     console.log('isReflexive: ', this.#isReflexive);
   }
 
-  illustrateReflexivity({ target }) {
-    if (!this.#inProgress.illustrateReflexivity) {
-      this.#inProgress.illustrateReflexivity = true;
-
+  drawMainDiagonal() {
+    return new Promise((resolve) => {
       const [startX, startY] = this.matrixElemAddressToCoords(1, 0);
       const [finishX] = this.matrixElemAddressToCoords(this.#set.length + 1, this.#set.length);
       const id = `reflexivity-svg-id-${Math.random()}`;
@@ -211,12 +211,41 @@ class RelationMatrix {
           requestAnimationFrame(callback)
         } else {
           setTimeout(() => {
-            this.hideDrawnElement($line).then(() => this.#inProgress.illustrateReflexivity = false);
+            this.hideDrawnElement($line).then(resolve);
           }, 5000);
         }
       };
 
       requestAnimationFrame(callback);
+    });
+  }
+
+  illustrateIrreflexivity({target}) {
+    if (!this.#inProgress.illustrateIrreflexivity) {
+      this.#inProgress.illustrateIrreflexivity = true;
+
+      this.drawMainDiagonal().then(() => this.#inProgress.illustrateIrreflexivity = false);
+
+      this.#inProgress.illustrateIrreflexivity = false;
+
+      const tooltip = new Tooltip(target);
+
+      const message = {
+        title: this.#isIrreflexive ? 'Почему отношение антирефлексивно?' : 'Почему отношение не антирефлексивно?',
+        text: this.#isIrreflexive
+          ? 'Мы можем сделать вывод о том, что отношение антирефлексивно, на том основании, что все элементы главной диагонали матрицы равны нулю.'
+          : 'Мы можем сделать вывод о том, что отношение не рефлексивно, на том основании, что НЕ все элементы главной диагонали матрицы равны нулю.'
+      };
+
+      tooltip.show(message);
+    }
+  }
+
+  illustrateReflexivity({target}) {
+    if (!this.#inProgress.illustrateReflexivity) {
+      this.#inProgress.illustrateReflexivity = true;
+
+      this.drawMainDiagonal().then(() => this.#inProgress.illustrateReflexivity = false);
 
       const tooltip = new Tooltip(target);
 
