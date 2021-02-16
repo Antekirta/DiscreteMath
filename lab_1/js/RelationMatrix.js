@@ -226,8 +226,6 @@ class RelationMatrix {
 
       this.drawMainDiagonal().then(() => this.#inProgress.illustrateIrreflexivity = false);
 
-      this.#inProgress.illustrateIrreflexivity = false;
-
       const tooltip = new Tooltip(target);
 
       const message = {
@@ -286,6 +284,45 @@ class RelationMatrix {
       : 'не симметрично';
 
     console.log('isSymmetric: ', this.#isSymmetric);
+  }
+
+  drawCircle() {
+    // const svg
+  }
+
+  async circleSymmetricElements() {
+    const circles = [];
+
+    for (const elem of this.#set) {
+      for (const innerElem of this.#relationMap.get(innerElem)) {
+
+      }
+    }
+
+    // this.#set.every(elem => {
+    //   return this.#relationMap.has(elem) && this.#relationMap.get(elem).every(innerElem => {
+    //     return this.#relationMap.has(innerElem) && this.#relationMap.get(innerElem).includes(elem);
+    //   })
+    // });
+  }
+
+  illustrateSymmetry() {
+    if (!this.#inProgress.illustrateSymmetry) {
+      this.#inProgress.illustrateSymmetry = true;
+
+      this.circleSymmetricElements().then(() => this.#inProgress.illustrateSymmetry = false);
+
+      const tooltip = new Tooltip(target);
+
+      const message = {
+        title: this.#isIrreflexive ? 'Почему отношение симметрично?' : 'Почему отношение не симметрично?',
+        text: this.#isIrreflexive
+          ? 'Мы можем сделать вывод о том, что отношение симметрично, на том основании, матрица симметрична относительно главной диагонали.'
+          : 'Мы можем сделать вывод о том, что отношение не симметрично, на том основании, что матрица ассиметрична относительно главной диагонали.'
+      };
+
+      tooltip.show(message);
+    }
   }
 
   checkAntiSymmetry() {
