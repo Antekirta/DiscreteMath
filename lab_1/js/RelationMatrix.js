@@ -10,8 +10,12 @@ class RelationMatrix {
   #$isAntiSymmetricFeature;
   #$isTransitiveFeature;
   #$matrix;
+  #$svg;
   #cellSize = 40;
   #size;
+  #inProgress = {
+    illustrateReflexivity: false
+  }
 
   constructor() {
     this.#$root = document.querySelector(`.${this.#baseClass}`);
@@ -23,6 +27,8 @@ class RelationMatrix {
     this.#$isSymmetricFeature = document.querySelector(`.${this.#baseClass}__features--symmetry`);
     this.#$isAntiSymmetricFeature = document.querySelector(`.${this.#baseClass}__features--antisymmetry`);
     this.#$isTransitiveFeature = document.querySelector(`.${this.#baseClass}__features--transitivity`);
+
+    this.#$isReflexiveFeature.addEventListener('click', this.illustrateReflexivity.bind(this));
   }
 
   init(set, relationMap) {
@@ -112,11 +118,44 @@ class RelationMatrix {
     </svg>
     `;
 
+    this.#$svg = this.#$matrix.querySelector('svg');
+
     this.checkReflexivity();
     this.checkIrreflexivity();
     this.checkSymmetry();
     this.checkAntiSymmetry();
     this.checkTransitivity();
+  }
+
+  /**
+   * Return [x, y] coordinates
+   * @param {number} i - index
+   * @param {number} j - index
+   * @return {number[]} coordinates
+   */
+  matrixElemAddressToCoords(i, j) {
+    return [
+      i * this.#cellSize - this.#cellSize / 2,
+      j * this.#cellSize - this.#cellSize / 2
+    ];
+  }
+
+  /**
+   * Hide element smoothly
+   * @param {ChildNode} $elem
+   * @return {Promise<void>}
+   */
+  hideDrawnElement($elem) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        $elem.remove();
+
+        resolve();
+      }, 500);
+
+      $elem.style.transition = '.3s';
+      $elem.style.opacity = '0';
+    });
   }
 
   checkReflexivity() {
@@ -129,6 +168,51 @@ class RelationMatrix {
       : 'не рефлексивно';
 
     console.log('isReflexive: ', isReflexive);
+  }
+
+  illustrateReflexivity() {
+    if (!this.#inProgress.illustrateReflexivity) {
+      this.#inProgress.illustrateReflexivity = true;
+
+      const [startX, startY] = this.matrixElemAddressToCoords(1, 0);
+      const [finishX, finishY] = this.matrixElemAddressToCoords(this.#set.length + 1, this.#set.length);
+      const id = `reflexivity-svg-id-${Math.random()}`;
+      let currentX = startX + 35,
+        currentY = startY + 30;
+      const step = 5;
+
+      const svg = `<line id="${id}"
+      x1="${currentX}"
+      y1="${currentY}"
+      x2="${currentX}"
+      y2="${currentY}"
+      stroke="red"
+      stroke-width="16"
+      stroke-opacity="0.5"
+      stroke-linecap="round"
+      />`;
+
+      this.#$svg.insertAdjacentHTML('beforeend', svg);
+
+      const $line = this.#$svg.getElementById(id);
+
+      const callback = () => {
+        if (currentX < finishX) {
+          currentX += step;
+          currentY += step;
+          $line.setAttribute('x2', currentX);
+          $line.setAttribute('y2', currentY);
+
+          requestAnimationFrame(callback)
+        } else {
+          setTimeout(() => {
+            this.hideDrawnElement($line).then(() => this.#inProgress.illustrateReflexivity = false);
+          }, 3000);
+        }
+      };
+
+      requestAnimationFrame(callback);
+    }
   }
 
   checkIrreflexivity() {
@@ -179,19 +263,19 @@ class RelationMatrix {
 
   checkTransitivity() {
     const isTransitive = this.#set.every(elem => {
-       if (this.#relationMap.has(elem)) {
-         return this.#relationMap.get(elem).every(innerElem => {
-           if (this.#relationMap.has(innerElem)) {
-             return this.#relationMap.get(innerElem).every(innerInnerElem => {
-               return this.#relationMap.get(elem).includes(innerInnerElem);
-             });
-           }
+      if (this.#relationMap.has(elem)) {
+        return this.#relationMap.get(elem).every(innerElem => {
+          if (this.#relationMap.has(innerElem)) {
+            return this.#relationMap.get(innerElem).every(innerInnerElem => {
+              return this.#relationMap.get(elem).includes(innerInnerElem);
+            });
+          }
 
-           return true;
-         })
-       }
+          return true;
+        })
+      }
 
-       return true;
+      return true;
     });
 
     this.#$isTransitiveFeature.innerText = isTransitive
