@@ -170,7 +170,7 @@ class RelationMatrix {
     console.log('isReflexive: ', isReflexive);
   }
 
-  illustrateReflexivity() {
+  illustrateReflexivity({ target }) {
     if (!this.#inProgress.illustrateReflexivity) {
       this.#inProgress.illustrateReflexivity = true;
 
@@ -207,11 +207,18 @@ class RelationMatrix {
         } else {
           setTimeout(() => {
             this.hideDrawnElement($line).then(() => this.#inProgress.illustrateReflexivity = false);
-          }, 3000);
+          }, 5000);
         }
       };
 
       requestAnimationFrame(callback);
+
+      const tooltip = new Tooltip(target);
+
+      tooltip.show({
+        title: 'Почему отношение рефлексивно?',
+        text: 'Мы можем сделать вывод о том, что отношение рефлексивно, на том основании, что все элементы главной диагонали матрицы равны единице.'
+      });
     }
   }
 
