@@ -16,6 +16,11 @@ class RelationMatrix {
   #inProgress = {
     illustrateReflexivity: false
   }
+  #isReflexive;
+  #isIrreflexive;
+  #isSymmetric;
+  #isAntiSymmetric;
+  #isTransitive;
 
   constructor() {
     this.#$root = document.querySelector(`.${this.#baseClass}`);
@@ -159,15 +164,15 @@ class RelationMatrix {
   }
 
   checkReflexivity() {
-    const isReflexive = this.#set.every(elem => {
+    this.#isReflexive = this.#set.every(elem => {
       return this.#relationMap.has(elem) && this.#relationMap.get(elem).includes(elem);
     });
 
-    this.#$isReflexiveFeature.innerText = isReflexive
+    this.#$isReflexiveFeature.innerText = this.#isReflexive
       ? 'рефлексивно'
       : 'не рефлексивно';
 
-    console.log('isReflexive: ', isReflexive);
+    console.log('isReflexive: ', this.#isReflexive);
   }
 
   illustrateReflexivity({ target }) {
@@ -175,7 +180,7 @@ class RelationMatrix {
       this.#inProgress.illustrateReflexivity = true;
 
       const [startX, startY] = this.matrixElemAddressToCoords(1, 0);
-      const [finishX, finishY] = this.matrixElemAddressToCoords(this.#set.length + 1, this.#set.length);
+      const [finishX] = this.matrixElemAddressToCoords(this.#set.length + 1, this.#set.length);
       const id = `reflexivity-svg-id-${Math.random()}`;
       let currentX = startX + 35,
         currentY = startY + 30;
@@ -215,43 +220,47 @@ class RelationMatrix {
 
       const tooltip = new Tooltip(target);
 
-      tooltip.show({
-        title: 'Почему отношение рефлексивно?',
-        text: 'Мы можем сделать вывод о том, что отношение рефлексивно, на том основании, что все элементы главной диагонали матрицы равны единице.'
-      });
+      const message = {
+        title: this.#isReflexive ? 'Почему отношение рефлексивно?' : 'Почему отношение не рефлексивно?',
+        text: this.#isReflexive
+          ? 'Мы можем сделать вывод о том, что отношение рефлексивно, на том основании, что все элементы главной диагонали матрицы равны единице.'
+          : 'Мы можем сделать вывод о том, что отношение не рефлексивно, на том основании, что НЕ все элементы главной диагонали матрицы равны единице.'
+      };
+
+      tooltip.show(message);
     }
   }
 
   checkIrreflexivity() {
-    const isIrreflexive = this.#set.every(elem => {
+    this.#isIrreflexive = this.#set.every(elem => {
       return this.#relationMap.has(elem)
         ? !this.#relationMap.get(elem).includes(elem)
         : true;
     });
 
-    this.#$isIrreflexiveFeature.innerText = isIrreflexive
+    this.#$isIrreflexiveFeature.innerText = this.#isIrreflexive
       ? 'антирефлексивно'
       : 'не антирефлексивно';
 
-    console.log('isIrreflexive: ', isIrreflexive);
+    console.log('isIrreflexive: ', this.#isIrreflexive);
   }
 
   checkSymmetry() {
-    const isSymmetric = this.#set.every(elem => {
+    this.#isSymmetric = this.#set.every(elem => {
       return this.#relationMap.has(elem) && this.#relationMap.get(elem).every(innerElem => {
         return this.#relationMap.has(innerElem) && this.#relationMap.get(innerElem).includes(elem);
       })
     });
 
-    this.#$isSymmetricFeature.innerText = isSymmetric
+    this.#$isSymmetricFeature.innerText = this.#isSymmetric
       ? 'симметрично'
       : 'не симметрично';
 
-    console.log('isSymmetric: ', isSymmetric);
+    console.log('isSymmetric: ', this.#isSymmetric);
   }
 
   checkAntiSymmetry() {
-    const isAntiSymmetric = this.#set.every(elem => {
+    this.#isAntiSymmetric = this.#set.every(elem => {
       return this.#relationMap.has(elem) && this.#relationMap.get(elem).every(innerElem => {
         if (innerElem === elem) {
           return true;
@@ -261,15 +270,15 @@ class RelationMatrix {
       })
     });
 
-    this.#$isAntiSymmetricFeature.innerText = isAntiSymmetric
+    this.#$isAntiSymmetricFeature.innerText = this.#isAntiSymmetric
       ? 'антисимметрично'
       : 'не антисимметрично';
 
-    console.log('isAntiSymmetric: ', isAntiSymmetric);
+    console.log('isAntiSymmetric: ', this.#isAntiSymmetric);
   }
 
   checkTransitivity() {
-    const isTransitive = this.#set.every(elem => {
+    this.#isTransitive = this.#set.every(elem => {
       if (this.#relationMap.has(elem)) {
         return this.#relationMap.get(elem).every(innerElem => {
           if (this.#relationMap.has(innerElem)) {
@@ -285,10 +294,10 @@ class RelationMatrix {
       return true;
     });
 
-    this.#$isTransitiveFeature.innerText = isTransitive
+    this.#$isTransitiveFeature.innerText = this.#isTransitive
       ? 'транзитивно'
       : 'не транзитивно';
 
-    console.log('isTransitive: ', isTransitive);
+    console.log('isTransitive: ', this.#isTransitive);
   }
 }
