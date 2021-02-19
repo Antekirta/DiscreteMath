@@ -36,6 +36,7 @@ class RelationMatrix {
 
     this.#$isReflexiveFeature.addEventListener('click', this.illustrateReflexivity.bind(this));
     this.#$isIrreflexiveFeature.addEventListener('click', this.illustrateIrreflexivity.bind(this));
+    this.#$isSymmetricFeature.addEventListener('click', this.illustrateSymmetry.bind(this));
   }
 
   init(set, relationMap) {
@@ -286,18 +287,35 @@ class RelationMatrix {
     console.log('isSymmetric: ', this.#isSymmetric);
   }
 
-  drawCircle() {
-    // const svg
+  drawCircle(x, y, $circlesGroup) {
+    const cx = this.#cellSize * x + this.#cellSize / 2;
+    const cy = this.#cellSize * y + this.#cellSize / 2 - this.#cellSize * 0.15;
+    const radius = this.#cellSize / 3;
+
+    const circle = `<circle cx="${cx}" cy="${cy}" r="${radius}" stroke="red" stroke-width="2" fill="none"/>`;
+    // const circle = `<path d="M ${cx} ${cy}" A ${radius} ${radius} 0 0 ${} />`;
+
+    $circlesGroup.insertAdjacentHTML('beforeend', circle);
   }
 
-  async circleSymmetricElements() {
-    const circles = [];
+  circleSymmetricElements() {
+    const id = `circles-group_${Math.random()}`;
 
-    for (const elem of this.#set) {
-      for (const innerElem of this.#relationMap.get(innerElem)) {
+    const group = `<g id="${id}"></g>`
 
-      }
-    }
+    this.#$svg.insertAdjacentHTML('beforeend', group);
+
+    const $circlesGroup = document.getElementById(id);
+
+    this.drawMainDiagonal();
+
+    this.drawCircle(1, 1, $circlesGroup);
+
+    // for (const elem of this.#set) {
+    //   for (const innerElem of this.#relationMap.get(innerElem)) {
+    //
+    //   }
+    // }
 
     // this.#set.every(elem => {
     //   return this.#relationMap.has(elem) && this.#relationMap.get(elem).every(innerElem => {
@@ -306,7 +324,7 @@ class RelationMatrix {
     // });
   }
 
-  illustrateSymmetry() {
+  illustrateSymmetry({ target }) {
     if (!this.#inProgress.illustrateSymmetry) {
       this.#inProgress.illustrateSymmetry = true;
 
