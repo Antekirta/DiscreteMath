@@ -287,13 +287,12 @@ class RelationMatrix {
     console.log('isSymmetric: ', this.#isSymmetric);
   }
 
-  drawCircle(x, y, $circlesGroup) {
+  drawCircle(x, y, $circlesGroup, {color} = {}) {
     const cx = this.#cellSize * (x + 1) + this.#cellSize / 2;
     const cy = this.#cellSize * y + this.#cellSize / 2 - this.#cellSize * 0.15;
     const radius = this.#cellSize / 3;
 
-    const circle = `<circle cx="${cx}" cy="${cy}" r="${radius}" stroke="red" stroke-width="2" fill="none"/>`;
-    // const circle = `<path d="M ${cx} ${cy}" A ${radius} ${radius} 0 0 ${} />`;
+    const circle = `<circle cx="${cx}" cy="${cy}" r="${radius}" stroke="${color}" stroke-width="2" fill="none"/>`;
 
     $circlesGroup.insertAdjacentHTML('beforeend', circle);
   }
@@ -310,50 +309,34 @@ class RelationMatrix {
 
       this.drawMainDiagonal();
 
-      const symmetricElems = [];
+      const elements = [];
 
       this.#set.forEach((elem, row) => {
         if (this.#relationMap.has(elem)) {
           this.#set.forEach((innerElem, col) => {
-              if (this.#relationMap.has(innerElem)) {
-                if (this.#relationMap.get(innerElem).includes(elem)) {
-                  symmetricElems.push({row, col, elem});
+            if (this.#relationMap.has(innerElem)) {
+              if (this.#relationMap.get(innerElem).includes(elem)) {
+                if (elem !== innerElem) {
+                  elements.push({row, col, isSymmetric: this.#relationMap.get(elem).includes(innerElem)});
                 }
               }
+            } else if (this.#relationMap.get(elem).includes(innerElem)) {
+              elements.push({row: col, col: row, isSymmetric: false});
+            }
           });
-
-          // this.#relationMap.get(elem).forEach((innerElem, col) => {
-          //   if (this.#relationMap.has(innerElem)) {
-          //     if (this.#relationMap.get(innerElem).includes(elem)) {
-          //       symmetricElems.push({row, col, elem});
-          //     }
-          //   }
-          // });
         }
       });
 
-      symmetricElems.forEach(({row, col, elem}) => {
-        console.log('row: ', row, ' col: ', col, ' elem: ', elem);
-
-        this.drawCircle(row, col, $circlesGroup);
+      elements.forEach(({row, col, isSymmetric}) => {
+        this.drawCircle(row, col, $circlesGroup, {
+          color: isSymmetric ? 'blue' : 'red'
+        });
       });
 
       setTimeout(() => {
         this.hideDrawnElement($circlesGroup).then(resolve);
       }, 5000);
     });
-
-    // for (const elem of this.#set) {
-    //   for (const innerElem of this.#relationMap.get(innerElem)) {
-    //
-    //   }
-    // }
-
-    // this.#set.every(elem => {
-    //   return this.#relationMap.has(elem) && this.#relationMap.get(elem).every(innerElem => {
-    //     return this.#relationMap.has(innerElem) && this.#relationMap.get(innerElem).includes(elem);
-    //   })
-    // });
   }
 
   illustrateSymmetry({target}) {
@@ -370,6 +353,12 @@ class RelationMatrix {
           ? 'Мы можем сделать вывод о том, что отношение симметрично, на том основании, матрица симметрична относительно главной диагонали.'
           : 'Мы можем сделать вывод о том, что отношение не симметрично, на том основании, что матрица ассиметрична относительно главной диагонали.'
       };
+
+      message.text += `
+        <br>
+        <p style="color: blue;">* Синим обведены симметричные элементы.</p>
+        <p style="color: red;">* Красным обведены асимметричные элементы.</p>
+      `;
 
       tooltip.show(message);
     }
