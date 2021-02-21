@@ -178,7 +178,7 @@ class RelationMatrix {
     console.log('isReflexive: ', this.#isReflexive);
   }
 
-  drawMainDiagonal() {
+  drawMainDiagonal({strokeWidth = 16} = {}) {
     return new Promise((resolve) => {
       const [startX, startY] = this.matrixElemAddressToCoords(1, 0);
       const [finishX] = this.matrixElemAddressToCoords(this.#set.length + 1, this.#set.length);
@@ -193,7 +193,7 @@ class RelationMatrix {
       x2="${currentX}"
       y2="${currentY}"
       stroke="red"
-      stroke-width="16"
+      stroke-width="${strokeWidth}"
       stroke-opacity="0.5"
       stroke-linecap="round"
       />`;
@@ -288,7 +288,7 @@ class RelationMatrix {
   }
 
   drawCircle(x, y, $circlesGroup) {
-    const cx = this.#cellSize * x + this.#cellSize / 2;
+    const cx = this.#cellSize * (x + 1) + this.#cellSize / 2;
     const cy = this.#cellSize * y + this.#cellSize / 2 - this.#cellSize * 0.15;
     const radius = this.#cellSize / 3;
 
@@ -299,17 +299,49 @@ class RelationMatrix {
   }
 
   circleSymmetricElements() {
-    const id = `circles-group_${Math.random()}`;
+    return new Promise(resolve => {
+      const id = `circles-group_${Math.random()}`;
 
-    const group = `<g id="${id}"></g>`
+      const group = `<g id="${id}"></g>`
 
-    this.#$svg.insertAdjacentHTML('beforeend', group);
+      this.#$svg.insertAdjacentHTML('beforeend', group);
 
-    const $circlesGroup = document.getElementById(id);
+      const $circlesGroup = document.getElementById(id);
 
-    this.drawMainDiagonal();
+      this.drawMainDiagonal();
 
-    this.drawCircle(1, 1, $circlesGroup);
+      const symmetricElems = [];
+
+      this.#set.forEach((elem, row) => {
+        if (this.#relationMap.has(elem)) {
+          this.#set.forEach((innerElem, col) => {
+              if (this.#relationMap.has(innerElem)) {
+                if (this.#relationMap.get(innerElem).includes(elem)) {
+                  symmetricElems.push({row, col, elem});
+                }
+              }
+          });
+
+          // this.#relationMap.get(elem).forEach((innerElem, col) => {
+          //   if (this.#relationMap.has(innerElem)) {
+          //     if (this.#relationMap.get(innerElem).includes(elem)) {
+          //       symmetricElems.push({row, col, elem});
+          //     }
+          //   }
+          // });
+        }
+      });
+
+      symmetricElems.forEach(({row, col, elem}) => {
+        console.log('row: ', row, ' col: ', col, ' elem: ', elem);
+
+        this.drawCircle(row, col, $circlesGroup);
+      });
+
+      setTimeout(() => {
+        this.hideDrawnElement($circlesGroup).then(resolve);
+      }, 5000);
+    });
 
     // for (const elem of this.#set) {
     //   for (const innerElem of this.#relationMap.get(innerElem)) {
@@ -324,7 +356,7 @@ class RelationMatrix {
     // });
   }
 
-  illustrateSymmetry({ target }) {
+  illustrateSymmetry({target}) {
     if (!this.#inProgress.illustrateSymmetry) {
       this.#inProgress.illustrateSymmetry = true;
 
