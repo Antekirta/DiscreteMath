@@ -216,17 +216,23 @@ class RelationMatrix {
   checkTransitivity() {
     this.#isTransitive = this.#set.every((elem, row) => {
       if (this.#relationMap.has(elem)) {
-        return this.#relationMap.get(elem).every((innerElem, col) => {
+        return this.#relationMap.get(elem).every((innerElem) => {
           if (this.#relationMap.has(innerElem)) {
-            return this.#relationMap.get(innerElem).every(innerInnerElem => {
-              if (this.#relationMap.get(elem).includes(innerInnerElem)) {
-                return true;
+            let forEveryBAContainsC = null;
+
+            this.#relationMap.get(innerElem).forEach((innerInnerElem, col) => {
+              if (forEveryBAContainsC === false) {
+                this.#checkNoTransitivityElements.push({row, col});
+              } else {
+                forEveryBAContainsC = this.#relationMap.get(elem).includes(innerInnerElem);
               }
             });
+
+            return forEveryBAContainsC;
           }
 
           return true;
-        })
+        });
       }
 
       return true;
