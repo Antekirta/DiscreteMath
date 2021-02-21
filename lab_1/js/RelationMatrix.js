@@ -15,7 +15,9 @@ class RelationMatrix {
   #size;
   #inProgress = {
     illustrateReflexivity: false,
-    illustrateIrreflexivity: false
+    illustrateIrreflexivity: false,
+    illustrateSymmetry: false,
+    illustrateAntiSymmetry: false,
   }
   #isReflexive;
   #isIrreflexive;
@@ -37,6 +39,7 @@ class RelationMatrix {
     this.#$isReflexiveFeature.addEventListener('click', this.illustrateReflexivity.bind(this));
     this.#$isIrreflexiveFeature.addEventListener('click', this.illustrateIrreflexivity.bind(this));
     this.#$isSymmetricFeature.addEventListener('click', this.illustrateSymmetry.bind(this));
+    this.#$isAntiSymmetricFeature.addEventListener('click', this.illustrateAntiSymmetry.bind(this));
   }
 
   init(set, relationMap) {
@@ -172,6 +175,10 @@ class RelationMatrix {
 
   checkSymmetry() {
     this.#isSymmetric = this.#set.every(elem => {
+      if (!this.#relationMap.has(elem)) {
+        return true;
+      }
+
       return this.#relationMap.has(elem) && this.#relationMap.get(elem).every(innerElem => {
         return this.#relationMap.has(innerElem) && this.#relationMap.get(innerElem).includes(elem);
       })
@@ -184,12 +191,16 @@ class RelationMatrix {
 
   checkAntiSymmetry() {
     this.#isAntiSymmetric = this.#set.every(elem => {
+      if (!this.#relationMap.has(elem)) {
+        return true;
+      }
+
       return this.#relationMap.has(elem) && this.#relationMap.get(elem).every(innerElem => {
-        if (innerElem === elem) {
-          return true;
+        if (this.#relationMap.has(innerElem) && this.#relationMap.get(innerElem).includes(elem)) {
+         return elem === innerElem;
         }
 
-        return !this.#relationMap.has(innerElem) || !this.#relationMap.get(innerElem).includes(elem);
+        return true;
       })
     });
 
@@ -279,6 +290,31 @@ class RelationMatrix {
         <br>
         <div style="color: blue;">* Синим обведены симметричные элементы.</div>
         <div style="color: red;">* Красным обведены асимметричные элементы.</div>
+      `;
+
+      tooltip.show(message);
+    }
+  }
+
+  illustrateAntiSymmetry({target}) {
+    if (!this.#inProgress.illustrateAntiSymmetry) {
+      this.#inProgress.illustrateAntiSymmetry = true;
+
+      this.encircleAntiSymmetricElements().then(() => this.#inProgress.illustrateAntiSymmetry = false);
+
+      const tooltip = new Tooltip(target);
+
+      const message = {
+        title: this.#isIrreflexive ? 'Почему отношение антисимметрично?' : 'Почему отношение не антисимметрично?',
+        text: this.#isIrreflexive
+          ? 'Мы можем сделать вывод о том, что отношение антисимметрично, на том основании, что симметричные относительно главной диагонали элементы матрицы располагаются ТОЛЬКО на главной диагонали матрицы.'
+          : 'Мы можем сделать вывод о том, что отношение не антисимметрично, на том основании, что симметричные относительно главной диагонали матрицы элементы располагаются не только на самой главной диагонали.'
+      };
+
+      message.text += `
+        <br>
+        <div style="color: blue;">* Синим обведены симметричные элементы на главной диагонали.</div>
+        <div style="color: red;">* Краысным обведены симметричные элементы вне главной диагонали.</div>
       `;
 
       tooltip.show(message);
@@ -391,6 +427,48 @@ class RelationMatrix {
       elements.forEach(({row, col, isSymmetric}) => {
         this.drawCircle(row, col, $circlesGroup, {
           color: isSymmetric ? 'blue' : 'red'
+        });
+      });
+
+      setTimeout(() => {
+        this.hideDrawnElement($circlesGroup).then(resolve);
+      }, 5000);
+    });
+  }
+
+  encircleAntiSymmetricElements() {
+    return new Promise(resolve => {
+      const id = `circles-group_${Math.random()}`;
+
+      const group = `<g id="${id}"></g>`
+
+      this.#$svg.insertAdjacentHTML('beforeend', group);
+
+      const $circlesGroup = document.getElementById(id);
+
+      this.drawMainDiagonal();
+
+      const elements = [];
+
+      this.#set.forEach((elem, row) => {
+        if (this.#relationMap.has(elem)) {
+          this.#set.forEach((innerElem, col) => {
+            if (this.#relationMap.has(innerElem)) {
+              if (this.#relationMap.get(innerElem).includes(elem)) {
+                if (elem === innerElem) {
+                  elements.push({row, col, isAntiSymmetric: this.#relationMap.get(elem).includes(innerElem)});
+                } else {
+                  elements.push({row: col, col: row, isAntiSymmetric: false});
+                }
+              }
+            }
+          });
+        }
+      });
+
+      elements.forEach(({row, col, isAntiSymmetric}) => {
+        this.drawCircle(row, col, $circlesGroup, {
+          color: isAntiSymmetric ? 'blue' : 'red'
         });
       });
 
