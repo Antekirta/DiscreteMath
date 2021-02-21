@@ -174,8 +174,6 @@ class RelationMatrix {
     this.#$isReflexiveFeature.innerText = this.#isReflexive
       ? 'рефлексивно'
       : 'не рефлексивно';
-
-    console.log('isReflexive: ', this.#isReflexive);
   }
 
   drawMainDiagonal({strokeWidth = 16} = {}) {
@@ -269,8 +267,6 @@ class RelationMatrix {
     this.#$isIrreflexiveFeature.innerText = this.#isIrreflexive
       ? 'антирефлексивно'
       : 'не антирефлексивно';
-
-    console.log('isIrreflexive: ', this.#isIrreflexive);
   }
 
   checkSymmetry() {
@@ -283,8 +279,6 @@ class RelationMatrix {
     this.#$isSymmetricFeature.innerText = this.#isSymmetric
       ? 'симметрично'
       : 'не симметрично';
-
-    console.log('isSymmetric: ', this.#isSymmetric);
   }
 
   drawCircle(x, y, $circlesGroup, {color} = {}) {
@@ -356,8 +350,8 @@ class RelationMatrix {
 
       message.text += `
         <br>
-        <p style="color: blue;">* Синим обведены симметричные элементы.</p>
-        <p style="color: red;">* Красным обведены асимметричные элементы.</p>
+        <div style="color: blue;">* Синим обведены симметричные элементы.</div>
+        <div style="color: red;">* Красным обведены асимметричные элементы.</div>
       `;
 
       tooltip.show(message);
@@ -378,8 +372,6 @@ class RelationMatrix {
     this.#$isAntiSymmetricFeature.innerText = this.#isAntiSymmetric
       ? 'антисимметрично'
       : 'не антисимметрично';
-
-    console.log('isAntiSymmetric: ', this.#isAntiSymmetric);
   }
 
   checkTransitivity() {
@@ -402,7 +394,5 @@ class RelationMatrix {
     this.#$isTransitiveFeature.innerText = this.#isTransitive
       ? 'транзитивно'
       : 'не транзитивно';
-
-    console.log('isTransitive: ', this.#isTransitive);
   }
 }

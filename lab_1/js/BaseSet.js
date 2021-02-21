@@ -152,7 +152,6 @@ class BaseSet {
 
   validatePairInput({target}) {
     if (!this.#set.includes(+target.value)) {
-      console.log('Error!');
       target.value = '';
 
       target.setAttribute('title', 'Элемент пары должен принадлежать множеству!');
@@ -191,8 +190,6 @@ class BaseSet {
     }
 
     document.dispatchEvent(event);
-
-    console.log('this.#relationMap: ', this.#relationMap);
   }
 
   generateRandomRelation() {
@@ -218,8 +215,6 @@ class BaseSet {
     }
 
     document.dispatchEvent(event);
-
-    console.log('this.#relationMap: ', this.#relationMap);
   }
 
   static removePair({target}) {
