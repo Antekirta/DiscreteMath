@@ -148,6 +148,145 @@ class RelationMatrix {
     ];
   }
 
+  checkReflexivity() {
+    this.#isReflexive = this.#set.every(elem => {
+      return this.#relationMap.has(elem) && this.#relationMap.get(elem).includes(elem);
+    });
+
+    this.#$isReflexiveFeature.innerText = this.#isReflexive
+      ? 'рефлексивно'
+      : 'не рефлексивно';
+  }
+
+  checkIrreflexivity() {
+    this.#isIrreflexive = this.#set.every(elem => {
+      return this.#relationMap.has(elem)
+        ? !this.#relationMap.get(elem).includes(elem)
+        : true;
+    });
+
+    this.#$isIrreflexiveFeature.innerText = this.#isIrreflexive
+      ? 'антирефлексивно'
+      : 'не антирефлексивно';
+  }
+
+  checkSymmetry() {
+    this.#isSymmetric = this.#set.every(elem => {
+      return this.#relationMap.has(elem) && this.#relationMap.get(elem).every(innerElem => {
+        return this.#relationMap.has(innerElem) && this.#relationMap.get(innerElem).includes(elem);
+      })
+    });
+
+    this.#$isSymmetricFeature.innerText = this.#isSymmetric
+      ? 'симметрично'
+      : 'не симметрично';
+  }
+
+  checkAntiSymmetry() {
+    this.#isAntiSymmetric = this.#set.every(elem => {
+      return this.#relationMap.has(elem) && this.#relationMap.get(elem).every(innerElem => {
+        if (innerElem === elem) {
+          return true;
+        }
+
+        return !this.#relationMap.has(innerElem) || !this.#relationMap.get(innerElem).includes(elem);
+      })
+    });
+
+    this.#$isAntiSymmetricFeature.innerText = this.#isAntiSymmetric
+      ? 'антисимметрично'
+      : 'не антисимметрично';
+  }
+
+  checkTransitivity() {
+    this.#isTransitive = this.#set.every(elem => {
+      if (this.#relationMap.has(elem)) {
+        return this.#relationMap.get(elem).every(innerElem => {
+          if (this.#relationMap.has(innerElem)) {
+            return this.#relationMap.get(innerElem).every(innerInnerElem => {
+              return this.#relationMap.get(elem).includes(innerInnerElem);
+            });
+          }
+
+          return true;
+        })
+      }
+
+      return true;
+    });
+
+    this.#$isTransitiveFeature.innerText = this.#isTransitive
+      ? 'транзитивно'
+      : 'не транзитивно';
+  }
+
+  // ILLUSTRATE PROPERTIES
+
+  illustrateReflexivity({target}) {
+    if (!this.#inProgress.illustrateReflexivity) {
+      this.#inProgress.illustrateReflexivity = true;
+
+      this.drawMainDiagonal().then(() => this.#inProgress.illustrateReflexivity = false);
+
+      const tooltip = new Tooltip(target);
+
+      const message = {
+        title: this.#isReflexive ? 'Почему отношение рефлексивно?' : 'Почему отношение не рефлексивно?',
+        text: this.#isReflexive
+          ? 'Мы можем сделать вывод о том, что отношение рефлексивно, на том основании, что все элементы главной диагонали матрицы равны единице.'
+          : 'Мы можем сделать вывод о том, что отношение не рефлексивно, на том основании, что НЕ все элементы главной диагонали матрицы равны единице.'
+      };
+
+      tooltip.show(message);
+    }
+  }
+
+  illustrateIrreflexivity({target}) {
+    if (!this.#inProgress.illustrateIrreflexivity) {
+      this.#inProgress.illustrateIrreflexivity = true;
+
+      this.drawMainDiagonal().then(() => this.#inProgress.illustrateIrreflexivity = false);
+
+      const tooltip = new Tooltip(target);
+
+      const message = {
+        title: this.#isIrreflexive ? 'Почему отношение антирефлексивно?' : 'Почему отношение не антирефлексивно?',
+        text: this.#isIrreflexive
+          ? 'Мы можем сделать вывод о том, что отношение антирефлексивно, на том основании, что все элементы главной диагонали матрицы равны нулю.'
+          : 'Мы можем сделать вывод о том, что отношение не рефлексивно, на том основании, что НЕ все элементы главной диагонали матрицы равны нулю.'
+      };
+
+      tooltip.show(message);
+    }
+  }
+
+  illustrateSymmetry({target}) {
+    if (!this.#inProgress.illustrateSymmetry) {
+      this.#inProgress.illustrateSymmetry = true;
+
+      this.encircleSymmetricElements().then(() => this.#inProgress.illustrateSymmetry = false);
+
+      const tooltip = new Tooltip(target);
+
+      const message = {
+        title: this.#isIrreflexive ? 'Почему отношение симметрично?' : 'Почему отношение не симметрично?',
+        text: this.#isIrreflexive
+          ? 'Мы можем сделать вывод о том, что отношение симметрично, на том основании, матрица симметрична относительно главной диагонали.'
+          : 'Мы можем сделать вывод о том, что отношение не симметрично, на том основании, что матрица ассиметрична относительно главной диагонали.'
+      };
+
+      message.text += `
+        <br>
+        <div style="color: blue;">* Синим обведены симметричные элементы.</div>
+        <div style="color: red;">* Красным обведены асимметричные элементы.</div>
+      `;
+
+      tooltip.show(message);
+    }
+  }
+
+  // SVG HELPERS
+
   /**
    * Hide element smoothly
    * @param {ChildNode} $elem
@@ -164,16 +303,6 @@ class RelationMatrix {
       $elem.style.transition = '.3s';
       $elem.style.opacity = '0';
     });
-  }
-
-  checkReflexivity() {
-    this.#isReflexive = this.#set.every(elem => {
-      return this.#relationMap.has(elem) && this.#relationMap.get(elem).includes(elem);
-    });
-
-    this.#$isReflexiveFeature.innerText = this.#isReflexive
-      ? 'рефлексивно'
-      : 'не рефлексивно';
   }
 
   drawMainDiagonal({strokeWidth = 16} = {}) {
@@ -219,68 +348,6 @@ class RelationMatrix {
     });
   }
 
-  illustrateIrreflexivity({target}) {
-    if (!this.#inProgress.illustrateIrreflexivity) {
-      this.#inProgress.illustrateIrreflexivity = true;
-
-      this.drawMainDiagonal().then(() => this.#inProgress.illustrateIrreflexivity = false);
-
-      const tooltip = new Tooltip(target);
-
-      const message = {
-        title: this.#isIrreflexive ? 'Почему отношение антирефлексивно?' : 'Почему отношение не антирефлексивно?',
-        text: this.#isIrreflexive
-          ? 'Мы можем сделать вывод о том, что отношение антирефлексивно, на том основании, что все элементы главной диагонали матрицы равны нулю.'
-          : 'Мы можем сделать вывод о том, что отношение не рефлексивно, на том основании, что НЕ все элементы главной диагонали матрицы равны нулю.'
-      };
-
-      tooltip.show(message);
-    }
-  }
-
-  illustrateReflexivity({target}) {
-    if (!this.#inProgress.illustrateReflexivity) {
-      this.#inProgress.illustrateReflexivity = true;
-
-      this.drawMainDiagonal().then(() => this.#inProgress.illustrateReflexivity = false);
-
-      const tooltip = new Tooltip(target);
-
-      const message = {
-        title: this.#isReflexive ? 'Почему отношение рефлексивно?' : 'Почему отношение не рефлексивно?',
-        text: this.#isReflexive
-          ? 'Мы можем сделать вывод о том, что отношение рефлексивно, на том основании, что все элементы главной диагонали матрицы равны единице.'
-          : 'Мы можем сделать вывод о том, что отношение не рефлексивно, на том основании, что НЕ все элементы главной диагонали матрицы равны единице.'
-      };
-
-      tooltip.show(message);
-    }
-  }
-
-  checkIrreflexivity() {
-    this.#isIrreflexive = this.#set.every(elem => {
-      return this.#relationMap.has(elem)
-        ? !this.#relationMap.get(elem).includes(elem)
-        : true;
-    });
-
-    this.#$isIrreflexiveFeature.innerText = this.#isIrreflexive
-      ? 'антирефлексивно'
-      : 'не антирефлексивно';
-  }
-
-  checkSymmetry() {
-    this.#isSymmetric = this.#set.every(elem => {
-      return this.#relationMap.has(elem) && this.#relationMap.get(elem).every(innerElem => {
-        return this.#relationMap.has(innerElem) && this.#relationMap.get(innerElem).includes(elem);
-      })
-    });
-
-    this.#$isSymmetricFeature.innerText = this.#isSymmetric
-      ? 'симметрично'
-      : 'не симметрично';
-  }
-
   drawCircle(x, y, $circlesGroup, {color} = {}) {
     const cx = this.#cellSize * (x + 1) + this.#cellSize / 2;
     const cy = this.#cellSize * y + this.#cellSize / 2 - this.#cellSize * 0.15;
@@ -291,7 +358,7 @@ class RelationMatrix {
     $circlesGroup.insertAdjacentHTML('beforeend', circle);
   }
 
-  circleSymmetricElements() {
+  encircleSymmetricElements() {
     return new Promise(resolve => {
       const id = `circles-group_${Math.random()}`;
 
@@ -331,68 +398,5 @@ class RelationMatrix {
         this.hideDrawnElement($circlesGroup).then(resolve);
       }, 5000);
     });
-  }
-
-  illustrateSymmetry({target}) {
-    if (!this.#inProgress.illustrateSymmetry) {
-      this.#inProgress.illustrateSymmetry = true;
-
-      this.circleSymmetricElements().then(() => this.#inProgress.illustrateSymmetry = false);
-
-      const tooltip = new Tooltip(target);
-
-      const message = {
-        title: this.#isIrreflexive ? 'Почему отношение симметрично?' : 'Почему отношение не симметрично?',
-        text: this.#isIrreflexive
-          ? 'Мы можем сделать вывод о том, что отношение симметрично, на том основании, матрица симметрична относительно главной диагонали.'
-          : 'Мы можем сделать вывод о том, что отношение не симметрично, на том основании, что матрица ассиметрична относительно главной диагонали.'
-      };
-
-      message.text += `
-        <br>
-        <div style="color: blue;">* Синим обведены симметричные элементы.</div>
-        <div style="color: red;">* Красным обведены асимметричные элементы.</div>
-      `;
-
-      tooltip.show(message);
-    }
-  }
-
-  checkAntiSymmetry() {
-    this.#isAntiSymmetric = this.#set.every(elem => {
-      return this.#relationMap.has(elem) && this.#relationMap.get(elem).every(innerElem => {
-        if (innerElem === elem) {
-          return true;
-        }
-
-        return !this.#relationMap.has(innerElem) || !this.#relationMap.get(innerElem).includes(elem);
-      })
-    });
-
-    this.#$isAntiSymmetricFeature.innerText = this.#isAntiSymmetric
-      ? 'антисимметрично'
-      : 'не антисимметрично';
-  }
-
-  checkTransitivity() {
-    this.#isTransitive = this.#set.every(elem => {
-      if (this.#relationMap.has(elem)) {
-        return this.#relationMap.get(elem).every(innerElem => {
-          if (this.#relationMap.has(innerElem)) {
-            return this.#relationMap.get(innerElem).every(innerInnerElem => {
-              return this.#relationMap.get(elem).includes(innerInnerElem);
-            });
-          }
-
-          return true;
-        })
-      }
-
-      return true;
-    });
-
-    this.#$isTransitiveFeature.innerText = this.#isTransitive
-      ? 'транзитивно'
-      : 'не транзитивно';
   }
 }
