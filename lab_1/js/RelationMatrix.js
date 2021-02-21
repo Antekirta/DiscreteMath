@@ -18,12 +18,15 @@ class RelationMatrix {
     illustrateIrreflexivity: false,
     illustrateSymmetry: false,
     illustrateAntiSymmetry: false,
+    illustrateTransitivity: false
   }
   #isReflexive;
   #isIrreflexive;
   #isSymmetric;
   #isAntiSymmetric;
   #isTransitive;
+
+  #checkNoTransitivityElements = [];
 
   constructor() {
     this.#$root = document.querySelector(`.${this.#baseClass}`);
@@ -40,6 +43,7 @@ class RelationMatrix {
     this.#$isIrreflexiveFeature.addEventListener('click', this.illustrateIrreflexivity.bind(this));
     this.#$isSymmetricFeature.addEventListener('click', this.illustrateSymmetry.bind(this));
     this.#$isAntiSymmetricFeature.addEventListener('click', this.illustrateAntiSymmetry.bind(this));
+    this.#$isTransitiveFeature.addEventListener('click', this.illustrateTransitivity.bind(this));
   }
 
   init(set, relationMap) {
@@ -197,7 +201,7 @@ class RelationMatrix {
 
       return this.#relationMap.has(elem) && this.#relationMap.get(elem).every(innerElem => {
         if (this.#relationMap.has(innerElem) && this.#relationMap.get(innerElem).includes(elem)) {
-         return elem === innerElem;
+          return elem === innerElem;
         }
 
         return true;
@@ -210,12 +214,14 @@ class RelationMatrix {
   }
 
   checkTransitivity() {
-    this.#isTransitive = this.#set.every(elem => {
+    this.#isTransitive = this.#set.every((elem, row) => {
       if (this.#relationMap.has(elem)) {
-        return this.#relationMap.get(elem).every(innerElem => {
+        return this.#relationMap.get(elem).every((innerElem, col) => {
           if (this.#relationMap.has(innerElem)) {
             return this.#relationMap.get(innerElem).every(innerInnerElem => {
-              return this.#relationMap.get(elem).includes(innerInnerElem);
+              if (this.#relationMap.get(elem).includes(innerInnerElem)) {
+                return true;
+              }
             });
           }
 
@@ -225,6 +231,8 @@ class RelationMatrix {
 
       return true;
     });
+
+    console.log('this.#checkNoTransitivityElements: ', this.#checkNoTransitivityElements)
 
     this.#$isTransitiveFeature.innerText = this.#isTransitive
       ? 'транзитивно'
@@ -280,8 +288,8 @@ class RelationMatrix {
       const tooltip = new Tooltip(target);
 
       const message = {
-        title: this.#isIrreflexive ? 'Почему отношение симметрично?' : 'Почему отношение не симметрично?',
-        text: this.#isIrreflexive
+        title: this.#isSymmetric ? 'Почему отношение симметрично?' : 'Почему отношение не симметрично?',
+        text: this.#isSymmetric
           ? 'Мы можем сделать вывод о том, что отношение симметрично, на том основании, матрица симметрична относительно главной диагонали.'
           : 'Мы можем сделать вывод о том, что отношение не симметрично, на том основании, что матрица ассиметрична относительно главной диагонали.'
       };
@@ -305,8 +313,8 @@ class RelationMatrix {
       const tooltip = new Tooltip(target);
 
       const message = {
-        title: this.#isIrreflexive ? 'Почему отношение антисимметрично?' : 'Почему отношение не антисимметрично?',
-        text: this.#isIrreflexive
+        title: this.#isAntiSymmetric ? 'Почему отношение антисимметрично?' : 'Почему отношение не антисимметрично?',
+        text: this.#isAntiSymmetric
           ? 'Мы можем сделать вывод о том, что отношение антисимметрично, на том основании, что симметричные относительно главной диагонали элементы матрицы располагаются ТОЛЬКО на главной диагонали матрицы.'
           : 'Мы можем сделать вывод о том, что отношение не антисимметрично, на том основании, что симметричные относительно главной диагонали матрицы элементы располагаются не только на самой главной диагонали.'
       };
@@ -314,7 +322,34 @@ class RelationMatrix {
       message.text += `
         <br>
         <div style="color: blue;">* Синим обведены симметричные элементы на главной диагонали.</div>
-        <div style="color: red;">* Краысным обведены симметричные элементы вне главной диагонали.</div>
+        <div style="color: red;">* Красным обведены симметричные элементы вне главной диагонали.</div>
+      `;
+
+      tooltip.show(message);
+    }
+  }
+
+  illustrateTransitivity({target}) {
+    // this.#checkNoTransitivityElements
+
+    if (!this.#inProgress.illustrateTransitivity) {
+      this.#inProgress.illustrateTransitivity = true;
+
+      this.encircleTransitiveElements().then(() => this.#inProgress.illustrateTransitivity = false);
+
+      const tooltip = new Tooltip(target);
+
+      const message = {
+        title: this.#isTransitive ? 'Почему отношение транзитивно?' : 'Почему отношение не транзитивно?',
+        text: this.#isTransitive
+          ? 'Мы можем сделать вывод о том, что отношение антисимметрично, на том основании, что симметричные относительно главной диагонали элементы матрицы располагаются ТОЛЬКО на главной диагонали матрицы.'
+          : 'Мы можем сделать вывод о том, что отношение не антисимметрично, на том основании, что симметричные относительно главной диагонали матрицы элементы располагаются не только на самой главной диагонали.'
+      };
+
+      message.text += `
+        <br>
+        <div style="color: blue;">* Синим обведены симметричные элементы на главной диагонали.</div>
+        <div style="color: red;">* Красным обведены симметричные элементы вне главной диагонали.</div>
       `;
 
       tooltip.show(message);
@@ -469,6 +504,56 @@ class RelationMatrix {
       elements.forEach(({row, col, isAntiSymmetric}) => {
         this.drawCircle(row, col, $circlesGroup, {
           color: isAntiSymmetric ? 'blue' : 'red'
+        });
+      });
+
+      setTimeout(() => {
+        this.hideDrawnElement($circlesGroup).then(resolve);
+      }, 5000);
+    });
+  }
+
+  encircleTransitiveElements() {
+    return new Promise(resolve => {
+      const id = `circles-group_${Math.random()}`;
+
+      const group = `<g id="${id}"></g>`
+
+      this.#$svg.insertAdjacentHTML('beforeend', group);
+
+      const $circlesGroup = document.getElementById(id);
+
+      const elements = [];
+
+      // this.#set.forEach((elem, row) => {
+      //   if (this.#relationMap.has(elem)) {
+      //     this.#relationMap.get(elem).forEach((innerElem, col) => {
+      //       if (this.#checkNoTransitivityElements.every(tranElem => tranElem.elem !== elem && tranElem.innerInnerElem !== innerElem)) {
+      //         elements.push({row: col, col: row, isTransitive: false});
+      //       }
+      //     });
+      //   }
+      // });
+
+      // this.#set.forEach((elem, row) => {
+      //   if (this.#relationMap.has(elem)) {
+      //     this.#set.forEach((innerElem, col) => {
+      //       if (this.#relationMap.has(innerElem)) {
+      //         if (this.#relationMap.get(innerElem).includes(elem)) {
+      //           if (elem === innerElem) {
+      //             elements.push({row, col, isTransitive: this.#relationMap.get(elem).includes(innerElem)});
+      //           } else {
+      //             elements.push({row: col, col: row, isTransitive: false});
+      //           }
+      //         }
+      //       }
+      //     });
+      //   }
+      // })
+
+      this.#checkNoTransitivityElements.forEach(({row, col}) => {
+        this.drawCircle(row, col, $circlesGroup, {
+          color: 'red'
         });
       });
 
