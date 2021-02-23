@@ -15,6 +15,8 @@ class Tooltip {
 
     if (!clickIsInside) {
       this.hide();
+
+      document.dispatchEvent(new Event('TOOLTIP_HAS_BEEN_CLOSED'));
     }
   }
 
@@ -30,15 +32,23 @@ class Tooltip {
     const { top, left } = this.#$target.getBoundingClientRect();
     const { offsetWidth } = this.#$target;
 
+    const width = 300;
+
+    let leftOffset = left + offsetWidth;
+
+    if ((window.innerWidth - leftOffset) < width) {
+      leftOffset -= width + offsetWidth;
+    }
+
     const style = `
-      position: absolute;
+      position: fixed;
       top: ${top - 130}px;
-      left: ${left + offsetWidth}px;
+      left: ${leftOffset}px;
       z-index: 100;
       background: #fff;
       border: solid 1px #222;
       padding: 15px 10px 10px 10px;
-      max-width: 350px;
+      width: ${width}px;
       border-radius: 4px;
     `;
 

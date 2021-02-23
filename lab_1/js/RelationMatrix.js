@@ -44,6 +44,10 @@ class RelationMatrix {
     this.#$isSymmetricFeature.addEventListener('click', this.illustrateSymmetry.bind(this));
     this.#$isAntiSymmetricFeature.addEventListener('click', this.illustrateAntiSymmetry.bind(this));
     this.#$isTransitiveFeature.addEventListener('click', this.illustrateTransitivity.bind(this));
+
+    document.addEventListener('TOOLTIP_HAS_BEEN_CLOSED', () => {
+      Object.keys(this.#inProgress).forEach(key => this.#inProgress[key] = false);
+    })
   }
 
   init(set, relationMap) {
@@ -386,6 +390,10 @@ class RelationMatrix {
 
       const $line = this.#$svg.getElementById(id);
 
+      document.addEventListener('TOOLTIP_HAS_BEEN_CLOSED', () => {
+        this.hideDrawnElement($line).then(resolve);
+      });
+
       const callback = () => {
         if (currentX < finishX) {
           currentX += step;
@@ -451,6 +459,10 @@ class RelationMatrix {
         });
       });
 
+      document.addEventListener('TOOLTIP_HAS_BEEN_CLOSED', () => {
+        this.hideDrawnElement($circlesGroup).then(resolve);
+      });
+
       setTimeout(() => {
         this.hideDrawnElement($circlesGroup).then(resolve);
       }, 5000);
@@ -491,6 +503,10 @@ class RelationMatrix {
         this.drawCircle(row, col, $circlesGroup, {
           color: isAntiSymmetric ? 'blue' : 'red'
         });
+      });
+
+      document.addEventListener('TOOLTIP_HAS_BEEN_CLOSED', () => {
+        this.hideDrawnElement($circlesGroup).then(resolve);
       });
 
       setTimeout(() => {
