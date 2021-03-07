@@ -403,9 +403,9 @@ class RelationMatrix {
 
           requestAnimationFrame(callback)
         } else {
-          setTimeout(() => {
-            this.hideDrawnElement($line).then(resolve);
-          }, 5000);
+          // setTimeout(() => {
+          //   this.hideDrawnElement($line).then(resolve);
+          // }, 5000);
         }
       };
 
@@ -463,9 +463,9 @@ class RelationMatrix {
         this.hideDrawnElement($circlesGroup).then(resolve);
       });
 
-      setTimeout(() => {
-        this.hideDrawnElement($circlesGroup).then(resolve);
-      }, 5000);
+      // setTimeout(() => {
+      //   this.hideDrawnElement($circlesGroup).then(resolve);
+      // }, 5000);
     });
   }
 
@@ -509,9 +509,9 @@ class RelationMatrix {
         this.hideDrawnElement($circlesGroup).then(resolve);
       });
 
-      setTimeout(() => {
-        this.hideDrawnElement($circlesGroup).then(resolve);
-      }, 5000);
+      // setTimeout(() => {
+      //   this.hideDrawnElement($circlesGroup).then(resolve);
+      // }, 5000);
     });
   }
 }
