@@ -105,8 +105,6 @@ class RelationMatrix {
           text = this.#relationMap.get(xValue).includes(yValue) ? 1 : 0;
         }
 
-        // text = `${xValue}_${yValue}`;
-
         matrixElements += `
           <text x="${x}" y="${y}" font-size="20" text-anchor="middle" fill="#222" font-weight="bolder">${text}</text>
         `;
