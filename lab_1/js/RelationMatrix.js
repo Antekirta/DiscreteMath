@@ -402,10 +402,6 @@ class RelationMatrix {
           $line.setAttribute('y2', currentY);
 
           requestAnimationFrame(callback)
-        } else {
-          // setTimeout(() => {
-          //   this.hideDrawnElement($line).then(resolve);
-          // }, 5000);
         }
       };
 
@@ -462,10 +458,6 @@ class RelationMatrix {
       document.addEventListener('TOOLTIP_HAS_BEEN_CLOSED', () => {
         this.hideDrawnElement($circlesGroup).then(resolve);
       });
-
-      // setTimeout(() => {
-      //   this.hideDrawnElement($circlesGroup).then(resolve);
-      // }, 5000);
     });
   }
 
@@ -508,10 +500,6 @@ class RelationMatrix {
       document.addEventListener('TOOLTIP_HAS_BEEN_CLOSED', () => {
         this.hideDrawnElement($circlesGroup).then(resolve);
       });
-
-      // setTimeout(() => {
-      //   this.hideDrawnElement($circlesGroup).then(resolve);
-      // }, 5000);
     });
   }
 }
