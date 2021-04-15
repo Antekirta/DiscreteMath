@@ -60,6 +60,10 @@ class RelationMatrix {
     this.drawMatrix();
   }
 
+  /**
+   * Генерируем SVG код для представления осей матрицы смежности
+   * @return {string} SVG
+   */
   renderAxis() {
     let axisPoints = '', text;
     let x, y;
@@ -88,6 +92,10 @@ class RelationMatrix {
     return axisPoints;
   }
 
+  /**
+   * заполняем матрицу смежности
+   * @return {string}
+   */
   renderMatrixElements() {
     let matrixElements = '', text;
     let x, y, xValue, yValue;
@@ -101,7 +109,9 @@ class RelationMatrix {
         yValue = this.#set[j];
         text = 0;
 
+        // если в отношении есть такой элемент...
         if (this.#relationMap.has(xValue)) {
+          // и он содержит соответствующий элемент на ортогональной оси, рисуем единицу, иначе ноль
           text = this.#relationMap.get(xValue).includes(yValue) ? 1 : 0;
         }
 
@@ -122,6 +132,9 @@ class RelationMatrix {
     this.#$features.style.display = 'none';
   }
 
+  /**
+   * Рисуем матрицу смежности и выполняем все небоходимые проверки отношения
+   */
   drawMatrix() {
     this.#$matrix.innerHTML = `
     <svg version="1.1"
@@ -157,6 +170,10 @@ class RelationMatrix {
     ];
   }
 
+  /**
+   * Проверяем отношение на рефлексивность
+   * Каждый элемент множества находится в отношении сам с собой
+   */
   checkReflexivity() {
     this.#isReflexive = this.#set.every(elem => {
       return this.#relationMap.has(elem) && this.#relationMap.get(elem).includes(elem);
@@ -167,6 +184,10 @@ class RelationMatrix {
       : 'не рефлексивно';
   }
 
+  /**
+   * Проверяем отношение на антирефлексивность
+   * Ни один элемент не состоит в отношении сам с собой
+   */
   checkIrreflexivity() {
     this.#isIrreflexive = this.#set.every(elem => {
       return this.#relationMap.has(elem)
@@ -179,6 +200,10 @@ class RelationMatrix {
       : 'не антирефлексивно';
   }
 
+  /**
+   * Проверяем отношение на симметричность
+   * Для каждого элемента в отношении выполнение aRb влечёт выполнение bRa
+   */
   checkSymmetry() {
     this.#isSymmetric = this.#set.every(elem => {
       if (!this.#relationMap.has(elem)) {
@@ -195,6 +220,10 @@ class RelationMatrix {
       : 'не симметрично';
   }
 
+  /**
+   * Проверяем отношение на антисимметричность
+   * Для любых элементов a и b множества из выполнения aRb и bRa следует a == b.
+   */
   checkAntiSymmetry() {
     this.#isAntiSymmetric = this.#set.every(elem => {
       if (!this.#relationMap.has(elem)) {
@@ -215,6 +244,10 @@ class RelationMatrix {
       : 'не антисимметрично';
   }
 
+  /**
+   * Проверямем отношение на транзитивность
+   * Для любых трёх элементов a,b,c из выполнения отношений aRb и bRc следует выполнение отношения aRc.
+   */
   checkTransitivity() {
     this.#isTransitive = this.#set.every(elem => {
       if (this.#relationMap.has(elem)) {
@@ -237,7 +270,7 @@ class RelationMatrix {
       : 'не транзитивно';
   }
 
-  // ILLUSTRATE PROPERTIES
+  // Нижеследующие методы не содержат логики и лишь иллюстрируют проверенные выше свойства отношения
 
   illustrateReflexivity({target}) {
     if (!this.#inProgress.illustrateReflexivity) {

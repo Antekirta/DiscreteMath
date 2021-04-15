@@ -1,7 +1,6 @@
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
-}
-
+/**
+ * Класс, представляющий множество
+ */
 class BaseSet {
   #$elem;
   #$textarea;
@@ -28,6 +27,9 @@ class BaseSet {
     this.#onPairInputChange = this.validatePairInput.bind(this);
   }
 
+  /**
+   * Инициализируем ссылки на HTML элементы
+   */
   initElements() {
     this.#$textarea = this.#$elem.querySelector(`.${this.baseClass}__textarea`);
     this.#$relation = this.#$elem.querySelector(`.${this.baseClass}__relation`);
@@ -39,12 +41,21 @@ class BaseSet {
     this.disableCreateBtn();
   }
 
+  /**
+   * Устанавливаем обработчики событий
+   */
   setEventListeners() {
+    // когда меняется содержимое текстового поля
     this.#$textarea.addEventListener('change', this.onSetChange.bind(this))
+    // когда пользователь кликает кнопку "Добавить пару"
     this.#$addPairBtn.addEventListener('click', this.addPair.bind(this))
+    // когда пользователь нажимает кнопку "Создать множество"
     this.#$createSetBtn.addEventListener('click', this.createSetAndRelation.bind(this))
   }
 
+  /**
+   * Создаем множество и показываем блко добавления пар
+   */
   onSetChange() {
     this.buildSet();
 
@@ -59,6 +70,10 @@ class BaseSet {
     }
   }
 
+  /**
+   * Фильтруем содержимое текстового поля, преобразуем его в список элементов, сортируем
+   * и высчитываем мощность получившегося множества
+   */
   buildSet() {
     const textAreaValue = this.#$textarea.value;
 
@@ -77,14 +92,23 @@ class BaseSet {
     this.renderCardinality();
   }
 
+  /**
+   * Выводим мощность множества
+   */
   renderCardinality() {
     this.#$cardinality.innerText = this.#set.length;
   }
 
+  /**
+   * Показываем блок добавления пар
+   */
   showRelations() {
     this.#$relation.style.display = 'block';
   }
 
+  /**
+   * Скрываем блок добавления пар
+   */
   hideRelations() {
     this.#$relation.style.display = 'none';
 
@@ -99,6 +123,9 @@ class BaseSet {
     this.#$createSetBtn.disabled = true;
   }
 
+  /**
+   * Добавляем поля, которые позволят пользователю добавить в отношение новую пару значений
+   */
   addPair() {
     const firstId = `pair_${this.#currentPairIndex}_1`;
     const secondId = `pair_${this.#currentPairIndex}_2`;
@@ -150,6 +177,10 @@ class BaseSet {
     this.#currentPairIndex++;
   }
 
+  /**
+   * Валидируем ввод элементов пары
+   * @param {HTMLElement} target
+   */
   validatePairInput({target}) {
     if (!this.#set.includes(+target.value)) {
       target.value = '';
@@ -164,17 +195,24 @@ class BaseSet {
     }
   }
 
+  /**
+   * Создаём отношение и уведомляем об этом остальные части приложения
+   */
   createSetAndRelation() {
     this.#relationMap = new Map();
 
     const $rows = this.#$relationRows.querySelectorAll(`.${this.baseClass}__pair-row`);
     let $rowInputs, x, y;
 
+    // Для каждого блока добавления пары в отношение...
     for (const $row of $rows) {
+      // сохраняем два текстовых поля...
       $rowInputs = $row.querySelectorAll(`.${this.baseClass}__pair-input`);
 
+      // берем их значения...
       [x, y] = Object.values($rowInputs).map(input => +input.value);
 
+      // и добавляем их в отношение
       if (this.#relationMap.has(x)) {
         this.#relationMap.set(x, [...this.#relationMap.get(x), y])
       } else {
@@ -192,6 +230,10 @@ class BaseSet {
     document.dispatchEvent(event);
   }
 
+  /**
+   * Эта функция была необходима на этапе отладки, чтобы генерировать необходимые отношения
+   * Удалять жалко
+   */
   generateRandomRelation() {
     this.#relationMap = new Map();
 
@@ -217,12 +259,21 @@ class BaseSet {
     document.dispatchEvent(event);
   }
 
+  /**
+   * Удаляем пару из отношения
+   * @param {HTMLElement} target
+   */
   static removePair({target}) {
     const $row = target.parentNode;
 
     $row.parentNode.removeChild($row);
   }
 
+  /**
+   * Удаляем некорректные значения и дубликаты из списка элементов множества, введенных пользователем
+   * @param {Array} rawElements
+   * @return {Array}
+   */
   static filterSetElements(rawElements) {
     return rawElements
       .filter((elem, index) => {
@@ -234,4 +285,8 @@ class BaseSet {
       })
       .map(elem => +elem);
   }
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
 }
