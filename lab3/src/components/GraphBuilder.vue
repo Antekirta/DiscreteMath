@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import { DFS } from "@/helpers/dfs";
+
 export default {
   name: 'GraphBuilder',
   props: {
@@ -50,7 +52,20 @@ export default {
       }));
     }
   },
+  watch: {
+    adjacencyMatrix() {
+      this.run();
+    }
+  },
+  created() {
+    this.run();
+  },
   methods: {
+    run() {
+      const dfs = new DFS(this.adjacencyMatrix);
+
+      dfs.search();
+    },
     getVertexCx(id) {
       return 20 * id + 20;
     },

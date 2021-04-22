@@ -32,10 +32,10 @@ export default {
     generateRandomMatrix() {
       const cells = [];
 
-      for (let i = 0; i <= this.rowsNumber; i++) {
+      for (let i = 0; i < this.rowsNumber; i++) {
         const row = [];
 
-        for (let j = 0; j <= this.rowsNumber; j++) {
+        for (let j = 0; j < this.rowsNumber; j++) {
           row.push(Math.random() < 0.5 ? 0 : 1);
         }
 
