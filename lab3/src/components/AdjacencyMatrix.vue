@@ -44,7 +44,16 @@ export default {
 
       this.cells = [...cells];
 
-      this.$emit('input', this.cells)
+      // this.$emit('input', this.cells)
+
+      this.$emit('input', [
+          [0, 1, 0, 1, 0, 0],
+          [0, 0, 1, 0, 1, 0],
+          [1, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 1, 0],
+          [0, 0, 0, 0, 0, 1],
+          [0, 0, 1, 0, 0, 0],
+      ]);
     }
   }
 }
