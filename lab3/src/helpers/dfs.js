@@ -13,6 +13,12 @@ export class DFS {
    **/
   vertices = []
 
+  /**
+   * @private
+   * @type {Array<number>}
+   */
+  visitedVertices = []
+
   /** @private
    * @type {Map<number,COLORS>}
   **/
@@ -52,6 +58,8 @@ export class DFS {
 
       this.search();
     }
+
+    console.log('visitedVertices: ', this.visitedVertices);
   }
 
   /**
@@ -71,7 +79,9 @@ export class DFS {
     } else {
       this.paint(u, COLORS.BLACK);
 
-      if (this.backTraceMap.get(u)) {
+      this.visitedVertices.push(u);
+
+      if (this.backTraceMap.get(u) !== undefined) {
         this.runDFS(this.backTraceMap.get(u));
       }
     }
