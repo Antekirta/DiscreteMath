@@ -1,20 +1,42 @@
 <template>
   <div class="adjacency-matrix">
-    <h3 class="adjacency-matrix__title">Матрица смежности</h3>
+    <h3 class="adjacency-matrix__title">
+      Матрица смежности
+    </h3>
 
     <br>
 
     <label>
-      Количество вершин:  <input v-model="rowsNumber" type="number" style="width: 50px">
+      Количество вершин:  <input
+        v-model="rowsNumber"
+        type="number"
+        style="width: 50px"
+      >
     </label>
 
     <div class="adjacency-matrix__matrix">
-      <div v-for="(row, i) in cells" :key="i" class="adjacency-matrix__row">
-        <input v-model.number="cells[i][j]" v-for="(cell, j) in row" :key="j" type="text" class="adjacency-matrix__input">
+      <div
+        v-for="(row, i) in cells"
+        :key="i"
+        class="adjacency-matrix__row"
+      >
+        <input
+          v-for="(cell, j) in row"
+          :key="j"
+          v-model.number="cells[i][j]"
+          type="text"
+          class="adjacency-matrix__input"
+        >
       </div>
     </div>
 
-    <button class="adjacency-matrix__btn" type="button" @click="generateRandomMatrix">Сгенерировать матрицу смежности</button>
+    <button
+      class="adjacency-matrix__btn"
+      type="button"
+      @click="generateRandomMatrix"
+    >
+      Сгенерировать матрицу смежности
+    </button>
   </div>
 </template>
 
@@ -47,13 +69,33 @@ export default {
       // this.$emit('input', this.cells)
 
       this.$emit('input', [
-          [0, 1, 0, 1, 0, 0],
-          [0, 0, 1, 0, 1, 0],
-          [1, 0, 0, 0, 0, 0],
-          [0, 0, 0, 0, 1, 0],
-          [0, 0, 0, 0, 0, 1],
-          [0, 0, 1, 0, 0, 0],
+          [0,1,0,1,0,0],
+          [0,0,1,0,1,0],
+          [1,0,0,0,0,0],
+          [0,0,0,0,1,0],
+          [0,0,0,0,0,1],
+          [0,0,1,0,0,0],
       ]);
+
+      // truly inverted
+      this.$emit('input', [
+          [0,0,1,0,0,0],
+          [1,0,0,0,0,0],
+          [0,1,0,0,0,0],
+          [1,0,0,0,0,0],
+          [0,1,0,1,0,0],
+          [0,0,1,0,1,0]
+      ]);
+
+      // inverted
+      // this.$emit('input', [
+      //     [0,1,1,1,0,0],
+      //     [0,0,1,0,1,0],
+      //     [0,0,0,0,0,1],
+      //     [0,0,0,0,1,0],
+      //     [0,0,0,0,0,1],
+      //     [0,0,0,0,0,0],
+      // ]);
     }
   }
 }

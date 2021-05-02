@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { DFS } from "@/helpers/dfs";
+import { Kosaraju } from "@/helpers/kosaraju";
 
 export default {
   name: 'GraphBuilder',
@@ -62,9 +62,9 @@ export default {
   },
   methods: {
     run() {
-      const dfs = new DFS(this.adjacencyMatrix);
+      const kosaraju = new Kosaraju(this.adjacencyMatrix);
 
-      dfs.search();
+      kosaraju.getStronglyConnectedComponents()
     },
     getVertexCx(id) {
       return 20 * id + 20;
