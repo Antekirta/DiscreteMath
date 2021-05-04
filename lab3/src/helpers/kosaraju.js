@@ -18,34 +18,16 @@ export class Kosaraju {
    * @return {Array<Array<number>>}
    */
   getStronglyConnectedComponents() {
+    this.renderMatrix(this.adjacencyMatrix)
+
     // inverted
-    this.dfs.init([
-      [0,0,1,0,0,0],
-      [1,0,0,0,0,0],
-      [0,1,0,0,0,0],
-      [1,0,0,0,0,0],
-      [0,1,0,1,0,0],
-      [0,0,1,0,1,0]
-    ]);
+    this.dfs.init(this.adjacencyMatrix);
 
     const { order } = this.dfs.runDFS();
 
     console.log('order: ', order);
 
-    // initial
-    this.dfs.init([
-      [0,1,0,1,0,0],
-      [0,0,1,0,1,0],
-      [1,0,0,0,0,0],
-      [0,0,0,0,1,0],
-      [0,0,0,0,0,1],
-      [0,0,1,0,0,0],
-    ], order);
-
-    const { trees } = this.dfs.runDFS();
-
-    // console.log('order: ', order)
-    console.log('trees: ', trees)
+    this.invertGraph();
 
     return [
       [],
@@ -58,7 +40,7 @@ export class Kosaraju {
    * @return {Array<Array<number>>}
    */
   invertGraph() {
-    const invertedMatrix = [...this.adjacencyMatrix];
+    const invertedMatrix = this.adjacencyMatrix.map(row => row.map(() => 0));
 
     this.adjacencyMatrix.forEach((row, rowIndex) => {
       row.forEach((hasEdge, v) => {
@@ -70,8 +52,24 @@ export class Kosaraju {
       })
     });
 
-    console.log('invertedMatrix: ', invertedMatrix)
+    this.renderMatrix(this.adjacencyMatrix)
+
+    console.log('============')
+
+    this.renderMatrix(invertedMatrix)
+
+    // console.log('invertedMatrix: ', invertedMatrix)
 
     return invertedMatrix;
+  }
+
+  renderMatrix(matrix) {
+    matrix.forEach((row) => {
+      let str = '';
+      row.forEach((hasEdge) => {
+        str += ` ${hasEdge}`;
+      })
+      console.log(`${str}\n`)
+    });
   }
 }

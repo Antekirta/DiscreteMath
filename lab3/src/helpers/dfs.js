@@ -73,7 +73,7 @@ export class DFS {
   }
 
   search() {
-    const unvisited = this.vertices.reverse().filter(v => this.isWhite(v));
+    const unvisited = this.vertices.filter(v => this.isWhite(v));
 
     if (unvisited.length) {
       this.runDFSOnVertex(unvisited[0]);
@@ -92,7 +92,7 @@ export class DFS {
    * @param {number} u - vertex to start from
    */
   runDFSOnVertex(u) {
-    console.log('u: ', u);
+    // console.log('u: ', u);
 
     this.paint(u, COLORS.GRAY);
 
