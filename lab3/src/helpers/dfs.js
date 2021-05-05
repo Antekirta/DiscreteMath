@@ -39,14 +39,20 @@ export class DFS {
   /**
    * Init
    * @param {Array<Array<number>>} adjacencyMatrix
+   * @param {Array<number>} vertices
    */
   init(adjacencyMatrix, vertices) {
     this.adjacencyMatrix = adjacencyMatrix;
 
+    this.trees = [];
+    this.visitedVertices = [];
+
     if (vertices) {
-      this.vertices = [...vertices];
+      this.vertices = [...vertices].reverse();
 
       this.vertices.forEach(vertex => this.colorsMap.set(vertex, COLORS.WHITE))
+
+      // debugger
     } else {
       this.vertices = Object.keys(this.adjacencyMatrix[0]).map(v => {
         const vertex = +v;
@@ -82,8 +88,6 @@ export class DFS {
 
       this.search();
     }
-
-    // console.log('visitedVertices: ', this.visitedVertices);
   }
 
   /**
@@ -92,12 +96,10 @@ export class DFS {
    * @param {number} u - vertex to start from
    */
   runDFSOnVertex(u) {
-    // console.log('u: ', u);
-
     this.paint(u, COLORS.GRAY);
 
     const adjacentUnvisited = this.getUnvisitedAdjacentVertex(u);
-
+    
     if (adjacentUnvisited) {
       this.backTraceMap.set(adjacentUnvisited, u);
 

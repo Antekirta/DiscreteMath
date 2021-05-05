@@ -18,21 +18,15 @@ export class Kosaraju {
    * @return {Array<Array<number>>}
    */
   getStronglyConnectedComponents() {
-    this.renderMatrix(this.adjacencyMatrix)
-
-    // inverted
     this.dfs.init(this.adjacencyMatrix);
 
     const { order } = this.dfs.runDFS();
 
-    console.log('order: ', order);
+    this.dfs.init(this.invertGraph(), order);
 
-    this.invertGraph();
+    const { trees } = this.dfs.runDFS();
 
-    return [
-      [],
-      []
-    ];
+    return trees;
   }
 
   /**
@@ -51,14 +45,6 @@ export class Kosaraju {
         }
       })
     });
-
-    this.renderMatrix(this.adjacencyMatrix)
-
-    console.log('============')
-
-    this.renderMatrix(invertedMatrix)
-
-    // console.log('invertedMatrix: ', invertedMatrix)
 
     return invertedMatrix;
   }
