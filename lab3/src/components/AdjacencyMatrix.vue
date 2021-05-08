@@ -1,3 +1,6 @@
+<!--
+Компонент для генерации матрицы смежности
+ -->
 <template>
   <div class="adjacency-matrix">
     <h3 class="adjacency-matrix__title">
@@ -53,18 +56,18 @@ export default {
   watch: {
     cells: {
       handler() {
-        this.$emit('input', this.cells)
+        // this.$emit('input', this.cells)
 
         // mocked value
-        // this.$emit('input', [
-        //   [0,1,0,1,0,0,0],
-        //   [0,0,1,0,1,0,0],
-        //   [1,0,0,0,0,0,0],
-        //   [0,0,0,0,1,0,0],
-        //   [0,0,0,0,0,1,0],
-        //   [0,0,1,0,0,0,0],
-        //   [0,0,0,0,1,0,0],
-        // ]);
+        this.$emit('input', [
+          [0,1,0,1,0,0,0],
+          [0,0,1,0,1,0,0],
+          [1,0,0,0,0,0,0],
+          [0,0,0,0,1,0,0],
+          [0,0,0,0,0,1,0],
+          [0,0,1,0,0,0,0],
+          [0,0,0,0,1,0,0],
+        ]);
       },
       deep: true
     }

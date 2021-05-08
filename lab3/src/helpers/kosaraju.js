@@ -1,5 +1,8 @@
 import { DFS } from "@/helpers/dfs";
 
+/**
+ * Реализация алгоритма Косарайю
+ */
 export class Kosaraju {
   /**
    * @private
@@ -14,23 +17,30 @@ export class Kosaraju {
   }
 
   /**
-   * Get strongly connected components
+   * Вернём список (списков) вершин, представляющих собой сильно связные компоненты графа
    * @return {Array<Array<number>>}
    */
   getStronglyConnectedComponents() {
-    this.dfs.init(this.adjacencyMatrix);
+    // Сперва запускаем список в глубину на исходном графе
+    // порядок обхода будет определён автоматически, поэтому второй аргумент не передаем
+    this.dfs.init(this.adjacencyMatrix, null);
 
+    // сейчас нам интересует только список вершин - то есть порядок, в котором будут обходиться вершины
+    // на второй итерации DFS
     const { order } = this.dfs.runDFS();
 
+    // теперь запустим поиск в глубину на инвертированном графе
     this.dfs.init(this.invertGraph(), order);
 
+    // полученные деревья и являются компонентами сильной связности
     const { trees } = this.dfs.runDFS();
 
     return trees;
   }
 
   /**
-   * Get inverted orgraph
+   * Инвертируем орграф, то есть обратим направление каждого его ребра
+   * На матрице смежности нужный эффект обеспечивается её транспонированием
    * @return {Array<Array<number>>}
    */
   invertGraph() {
@@ -38,7 +48,7 @@ export class Kosaraju {
 
     this.adjacencyMatrix.forEach((row, rowIndex) => {
       row.forEach((hasEdge, v) => {
-        if (hasEdge === 1) {
+        if (hasEdge) {
           invertedMatrix[rowIndex][v] = 0;
 
           invertedMatrix[v][rowIndex] = 1;
@@ -49,6 +59,10 @@ export class Kosaraju {
     return invertedMatrix;
   }
 
+  /**
+   * Служебная функция для вывода отладочной информации о матрице смежности
+   * @param matrix
+   */
   renderMatrix(matrix) {
     matrix.forEach((row) => {
       let str = '';

@@ -1,6 +1,9 @@
+<!--
+ Компонент для рендера графа и вывода его сильно связаных компонент
+ -->
 <template>
   <div class="graph-builder">
-    <p>Компоненты сильной связности: </p>
+    <p><b>Компоненты сильной связности:</b></p>
     
     <section v-if="trees">
       <p
@@ -18,7 +21,7 @@
       height="1000"
     />
 
-    <p v-else>
+    <p v-if="!isVisible">
       Рендеринг графом с числом вершин более десяти не поддерживается.
     </p>
   </div>
@@ -57,15 +60,25 @@ export default {
     this.drawGraph();
   },
   methods: {
-   drawGraph() {
+   /**
+    * Для рендеринга графа мы используем сторонню библиотеку, но для ее использования нужно представить граф в виде
+    * набора вершин и ребер как отдельных объектов. Мы создадим этот набор сами на основе матрицы смежности.
+    */
+   async drawGraph() {
      const canvas = window.$('#canvas')[0];
 
-     const context = canvas.getContext('2d');
+     if (canvas) {
+       const context = canvas.getContext('2d');
 
-     context.clearRect(0, 0, canvas.width, canvas.height);
+       context.clearRect(0, 0, canvas.width, canvas.height);
+
+       await this.$nextTick();
+     }
 
      if (this.adjacencyMatrix.length <= 10) {
        this.isVisible = true;
+
+       await this.$nextTick();
 
        /* eslint-disable */
        const graph = new Springy.Graph();
@@ -74,7 +87,7 @@ export default {
 
        this.adjacencyMatrix.forEach((row, u) => {
          row.forEach((hasEdge, v) => {
-           if (hasEdge === 1) {
+           if (hasEdge) {
              graph.newEdge(nodes[u], nodes[v]);
            }
          });
@@ -84,12 +97,14 @@ export default {
        /* eslint-disable */
      } else {
        this.isVisible = false;
+
+       this.$forceUpdate();
      }
     },
     run() {
       const kosaraju = new Kosaraju(this.adjacencyMatrix);
 
-      this.trees = kosaraju.getStronglyConnectedComponents();
+      this.trees = [...kosaraju.getStronglyConnectedComponents()];
     }
   }
 }
@@ -97,6 +112,8 @@ export default {
 
 <style lang="scss">
 .graph-builder {
+  pointer-events: none;
+
   &__title {
     display: inline-block;
     border-bottom: 2px #222 solid;
