@@ -1,34 +1,33 @@
 <template>
   <div class="graph-builder">
-    <h3 class="graph-builder__title">
-      Граф
-    </h3>
+    <p>Компоненты сильной связности: </p>
+    
+    <section v-if="trees">
+      <p
+        v-for="(tree, i) in trees"
+        :key="i"
+      >
+        {{ tree }}
+      </p>
+    </section>
+    
+    <canvas
+      v-if="isVisible"
+      id="canvas"
+      width="1000"
+      height="1000"
+    />
 
-    <br>
-
-    <svg
-      version="1.1"
-      baseProfile="full"
-      :width="300"
-      :height="300"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <circle
-        v-for="vertex in vertices"
-        :key="vertex.id"
-        :cx="getVertexCx(vertex.id)"
-        :cy="getVertexCy(vertex.id)"
-        r="10"
-        stroke="red"
-        stroke-width="2"
-        fill="red"
-      />
-    </svg>
+    <p v-else>
+      Рендеринг графом с числом вершин более десяти не поддерживается.
+    </p>
   </div>
 </template>
 
 <script>
+
 import { Kosaraju } from "@/helpers/kosaraju";
+import 'springy/springyui';
 
 export default {
   name: 'GraphBuilder',
@@ -41,36 +40,56 @@ export default {
   },
   data() {
     return {
-      edges: []
-     }
-  },
-  computed: {
-    vertices() {
-      return this.adjacencyMatrix.map((_, index) => ({
-        id: index,
-        color: 'white'
-      }));
+      isVisible: true,
+      trees: null
     }
   },
   watch: {
     adjacencyMatrix() {
       this.run();
+
+      this.drawGraph();
     }
   },
-  created() {
+  mounted() {
     this.run();
+
+    this.drawGraph();
   },
   methods: {
+   drawGraph() {
+     const canvas = window.$('#canvas')[0];
+
+     const context = canvas.getContext('2d');
+
+     context.clearRect(0, 0, canvas.width, canvas.height);
+
+     if (this.adjacencyMatrix.length <= 10) {
+       this.isVisible = true;
+
+       /* eslint-disable */
+       const graph = new Springy.Graph();
+
+       const nodes = this.adjacencyMatrix.map((_, key) =>  graph.newNode({label: key}));
+
+       this.adjacencyMatrix.forEach((row, u) => {
+         row.forEach((hasEdge, v) => {
+           if (hasEdge === 1) {
+             graph.newEdge(nodes[u], nodes[v]);
+           }
+         });
+       });
+
+       window.$('#canvas').springy({ graph });
+       /* eslint-disable */
+     } else {
+       this.isVisible = false;
+     }
+    },
     run() {
       const kosaraju = new Kosaraju(this.adjacencyMatrix);
 
-      kosaraju.getStronglyConnectedComponents()
-    },
-    getVertexCx(id) {
-      return 20 * id + 20;
-    },
-    getVertexCy(id) {
-      return 20 * id + 20;
+      this.trees = kosaraju.getStronglyConnectedComponents();
     }
   }
 }

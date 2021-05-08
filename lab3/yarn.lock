@@ -3043,6 +3043,14 @@ cyclist@^1.0.1:
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-1.0.1.tgz#596e9698fd0c80e12038c2b82d6eb1b35b6224d9"
   integrity sha1-WW6WmP0MgOEgOMK4LW6xs1tiJNk=
 
+cytoscape@^3.18.2:
+  version "3.18.2"
+  resolved "https://registry.yarnpkg.com/cytoscape/-/cytoscape-3.18.2.tgz#e5a1b37de3b53946a6d8f8586eefa44a0978ade4"
+  integrity sha512-NRY3JTrUzx0fSn44LyMlPqC8/zuuOo8kbr2hFlfjiObRmtir+lnxVg08f8wUA4X/P80df9vSThKDASl39yH+Iw==
+  dependencies:
+    heap "^0.2.6"
+    lodash.debounce "^4.0.8"
+
 dashdash@^1.12.0:
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
@@ -4382,6 +4390,11 @@ he@1.2.x, he@^1.1.0:
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
 
+heap@^0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/heap/-/heap-0.2.6.tgz#087e1f10b046932fc8594dd9e6d378afc9d1e5ac"
+  integrity sha1-CH4fELBGky/IWU3Z5tN4r8nR5aw=
+
 hex-color-regex@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/hex-color-regex/-/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"
@@ -5111,6 +5124,11 @@ jest-worker@^25.4.0:
   dependencies:
     merge-stream "^2.0.0"
     supports-color "^7.0.0"
+
+jquery@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.6.0.tgz#c72a09f15c1bdce142f49dbf1170bdf8adac2470"
+  integrity sha512-JVzAR/AjBvVt2BmYhxRCSYysDsPcssdmTFnzyLEts9qNwmjmu4JTAMYubEfwVOSwpQ1I1sKKFcxhZCI2buerfw==
 
 js-base64@^2.1.8:
   version "2.6.4"
@@ -7775,6 +7793,11 @@ split-string@^3.0.1, split-string@^3.0.2:
   integrity sha512-NzNVhJDYpwceVVii8/Hu6DKfD2G+NrQHlS/V/qgv763EYudVwEcMQNxd2lh+0VrUByXN/oJkl5grOhYWvQUYiw==
   dependencies:
     extend-shallow "^3.0.0"
+
+springy@^2.8.0:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/springy/-/springy-2.8.0.tgz#43d8cb04fd8b1376e8bbb4513fa4f978c24f088f"
+  integrity sha512-PXtwxjww53H/8c+ng3zxMJwNRN/KPv6DKA8ITHi6lW57gfzty0wV/N8ZeTmgfO0ElfQip8W/1iVZk1d5ne4L+g==
 
 sprintf-js@~1.0.2:
   version "1.0.3"

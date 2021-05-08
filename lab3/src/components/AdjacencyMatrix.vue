@@ -52,8 +52,19 @@ export default {
   },
   watch: {
     cells: {
-      handler(value) {
-        console.log('CELls WATCHER', value);
+      handler() {
+        this.$emit('input', this.cells)
+
+        // mocked value
+        // this.$emit('input', [
+        //   [0,1,0,1,0,0,0],
+        //   [0,0,1,0,1,0,0],
+        //   [1,0,0,0,0,0,0],
+        //   [0,0,0,0,1,0,0],
+        //   [0,0,0,0,0,1,0],
+        //   [0,0,1,0,0,0,0],
+        //   [0,0,0,0,1,0,0],
+        // ]);
       },
       deep: true
     }
@@ -73,18 +84,6 @@ export default {
       }
 
       this.cells = [...cells];
-
-      this.$emit('input', this.cells)
-
-      // this.$emit('input', [
-      //     [0,1,0,1,0,0,0],
-      //     [0,0,1,0,1,0,0],
-      //     [1,0,0,0,0,0,0],
-      //     [0,0,0,0,1,0,0],
-      //     [0,0,0,0,0,1,0],
-      //     [0,0,1,0,0,0,0],
-      //     [0,0,0,0,1,0,0],
-      // ]);
     }
   }
 }

@@ -74,7 +74,7 @@ export class DFS {
 
     return {
       order: this.visitedVertices,
-      trees: this.trees
+      trees: [...this.trees]
     }
   }
 
@@ -99,7 +99,7 @@ export class DFS {
     this.paint(u, COLORS.GRAY);
 
     const adjacentUnvisited = this.getUnvisitedAdjacentVertex(u);
-    
+
     if (adjacentUnvisited) {
       this.backTraceMap.set(adjacentUnvisited, u);
 
