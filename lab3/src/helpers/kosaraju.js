@@ -69,6 +69,7 @@ export class Kosaraju {
       row.forEach((hasEdge) => {
         str += ` ${hasEdge}`;
       })
+      // eslint-disable-next-line
       console.log(`${str}\n`)
     });
   }
